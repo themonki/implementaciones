@@ -8,6 +8,7 @@
 #include <cmath>
 #include <fstream>
 #include <cstdlib>
+#include <boost/lexical_cast.hpp>
 
 using namespace std;
 
@@ -19,7 +20,7 @@ class Image
 private:
 
     int width;
-    int heigh;
+    int height;
     int level;
     matrix red;
     matrix blue;
@@ -28,6 +29,7 @@ private:
     string type;
     string path;
     void readImage();
+    int round(double number);
 
 public:
     Image(string path);
@@ -36,23 +38,25 @@ public:
     int getheight();
     int getLevel();
 
-    void setWidth();
-    void setHeight();
-    void setLevel();
+    void setWidth(int width);
+    void setHeight(int height);
+    void setLevel(int level);
 
     matrix getRed();
     matrix getBlue();
     matrix getGreen();
     matrix getGraysScale();
 
-    void getRed(matrix red);
-    void getBlue(matrix blue);
-    void getGreen(matrix green);
-    void getGraysScale(matrix graysScale);
+    void setRed(matrix red);
+    void setBlue(matrix blue);
+    void setGreen(matrix green);
+    void setGraysScale(matrix graysScale);
 
 
     string getType();
     void setType(string type);
+
+    void saveImage(string path);
 
 };
 
