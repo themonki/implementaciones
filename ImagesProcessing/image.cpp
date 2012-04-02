@@ -182,7 +182,7 @@ matrix Image::getBlue(){
 
 
 //Le asigna la matriz de azul a la imagen
-matrix Image::obtenerEscalaGrises(){
+matrix Image::getGraysScale(){
         return graysScale;
 }
 
@@ -277,37 +277,37 @@ void Image::saveImage(string path){
 
         if(!path.substr(path.length()-4, 4).compare(".pgm")){ //Si la ruta es una imagen en escala de grises
                 content+="P2\n# Pruebas Procesamiento de Imagenes \n";
-                content+=(boost::lexical_cast<string>(height)+" "+boost::lexical_cast<string>(width)+"\n");
-                content+=(boost::lexical_cast<string>(level)+"L\n");
+                //content+=(boost::lexical_cast<string>(height)+" "+boost::lexical_cast<string>(width)+"\n");
+                //content+=(boost::lexical_cast<string>(level)+"L\n");
 
                 for(int i=0; i<height; i++){
                         for(int j=0; j<width; j++)
-                                content+=(boost::lexical_cast<string>(round(graysScale[i][j]))+"\t");
+                                //content+=(boost::lexical_cast<string>(round(graysScale[i][j]))+"\t");
                         content+="\n";
                 }
 
                 imageOut << content;
 
-                imagenOut.close();
+                imageOut.close();
         }
 
         if(!path.substr(path.length()-4, 4).compare(".ppm")){ //Si la ruta es una imagen a color
                 content+="P3\n# Pruebas Procesamiento de Imagenes\n";
-                content+=(boost::lexical_cast<string>(height)+" "+boost::lexical_cast<string>(width)+"\n");
-                content+=(boost::lexical_cast<string>(level)+"\n");
+                //content+=(boost::lexical_cast<string>(height)+" "+boost::lexical_cast<string>(width)+"\n");
+                //content+=(boost::lexical_cast<string>(level)+"\n");
 
                 for(int i=0; i<height; i++){
                         for(int j=0; j<width; j++){
-                                content+=(boost::lexical_cast<string>(round(red[i][j]))+" ");
-                                content+=(boost::lexical_cast<string>(round(green[i][j]))+" ");
-                                content+=(boost::lexical_cast<string>(round(blue[i][j]))+"\t");
+                                //content+=(boost::lexical_cast<string>(round(red[i][j]))+" ");
+                                //content+=(boost::lexical_cast<string>(round(green[i][j]))+" ");
+                                //content+=(boost::lexical_cast<string>(round(blue[i][j]))+"\t");
                         }
                         content+="\n";
                 }
 
                 imageOut << content;
 
-                imagenOut.close();
+                imageOut.close();
         }
         if(path.substr(path.length()-4, 4).compare(".pgm") && path.substr(path.length()-4, 4).compare(".ppm")){ //Si la ruta de la imagen esta en otro formato
                 imageOut.close();

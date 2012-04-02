@@ -8,7 +8,7 @@
 #include <cmath>
 #include <fstream>
 #include <cstdlib>
-#include <boost/lexical_cast.hpp>
+//#include <boost/lexical_cast.hpp>
 
 using namespace std;
 
@@ -35,7 +35,7 @@ public:
     Image(string path);
 
     int getWidth();
-    int getheight();
+    int getHeight();
     int getLevel();
 
     void setWidth(int width);
@@ -57,6 +57,10 @@ public:
     void setType(string type);
 
     void saveImage(string path);
+
+    void colorToGraysScale();
+
+
 
 };
 
