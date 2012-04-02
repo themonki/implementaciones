@@ -1,0 +1,17 @@
+(listo)Implementar una función para lectura y escritura de imágenes PPM y PGM
+
+Implementar una función para reducir o ampliar el tamaño de una imagen
+
+Implementar un función para reducir o ampliar la resolución de una imagen
+
+Implementar una función para cambiar entre espacios de color
+
+Implementar una función de corrección Gamma
+
+Implementar metodos para thresholding (Isodata, Otsu, 2 picos(pero no es tan necesario))
+
+Implementar metodo que permita ecualizar.
+
+Implementar Filtros.
+
+

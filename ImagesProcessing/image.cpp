@@ -71,8 +71,6 @@ void Image::readImage()
                         const char* s= "GrayValue-readImage";
                         throw(ImageExeption(VALOR_FUERA_RANGO_NIVEL,s ));
                     }
-
-
                 }else{
                     getline(imageIn, content);
                     i--;
@@ -355,4 +353,8 @@ bool Image::isRangeLevel(int number){
     return (number>=0 && number<=this->level);
 }
 
+
+/*matrix Image::scaleImage(int height2, int width2){
+
+}*/
 

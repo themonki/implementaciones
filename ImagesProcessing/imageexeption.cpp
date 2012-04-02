@@ -12,11 +12,9 @@ ImageExeption::ImageExeption(int mot, const char* des) : exception(), motive(mot
 const char* ImageExeption::what() const throw(){
     switch(this->motive){
     case VALOR_FUERA_RANGO_NIVEL: return "El valor esta por fuera del Rango de Nivel.\n"; break;
-    //case EXTENSION_DESCONOCIDA: return "El archivo tiene una extension invalida o desconocida.\n"; break;
+    case EXTENSION_DESCONOCIDA: return "El archivo tiene una extension invalida o desconocida.\n"; break;
     default: return "Error Desconocido";
     }
-
-
 }
 
 int ImageExeption::getMotive(){

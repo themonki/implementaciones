@@ -9,7 +9,6 @@
 #include <fstream>
 #include <cstdlib>
 #include "imageexeption.h"
-//#include <boost/lexical_cast.hpp>
 
 using namespace std;
 
@@ -63,7 +62,7 @@ public:
 
     bool isRangeLevel(int);
 
-
+    matrix scaleImage(int, int);
 
 };
 
