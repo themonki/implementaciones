@@ -8,6 +8,7 @@
 #include <cmath>
 #include <fstream>
 #include <cstdlib>
+#include "imageexeption.h"
 //#include <boost/lexical_cast.hpp>
 
 using namespace std;
@@ -59,6 +60,8 @@ public:
     void saveImage(string path);
 
     void colorToGraysScale();
+
+    bool isRangeLevel(int);
 
 
 

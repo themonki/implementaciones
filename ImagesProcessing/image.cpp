@@ -63,13 +63,19 @@ void Image::readImage()
                 imageIn >> content;
 
                 if(content.substr(0, 1).compare("#")){ //Si la linea no es un comentario se guardan los datos
+                    int value = atoi(content.c_str());
+                    if(isRangeLevel(value)){
+                        this->graysScale[i][j]=value;
+                    }else{
+                        //cerr << "Valor fuera del rango de nivel";
+                        const char* s= "GrayValue-readImage";
+                        throw(ImageExeption(VALOR_FUERA_RANGO_NIVEL,s ));
+                    }
 
-                    this->graysScale[i][j]=atoi(content.c_str());
 
                 }else{
                     getline(imageIn, content);
                     i--;
-                    j--;
                 } //Si es un comentario se descarta el resto de linea
             }
         }
@@ -95,20 +101,37 @@ void Image::readImage()
 
                 if(content.substr(0, 1).compare("#")){ //Si la linea no es un comentario se guardan los datos
 
+                    int value;
                     imageIn >> content; //R
-                    red[i][j] = atoi(content.c_str());;
+                    value = atoi(content.c_str());
+                    if(isRangeLevel(value)){
+                        red[i][j] = value;
+                    }else{
+                        const char* s= "RedValue-readImage";
+                        throw(ImageExeption(VALOR_FUERA_RANGO_NIVEL), s);
+                    }
 
                     imageIn >> content; //G
-                    green[i][j] = atoi(content.c_str());;
+                    value = atoi(content.c_str());
+                    if(isRangeLevel(value)){
+                        green[i][j] = value;
+                    }else{
+                        const char* s= "GreenValue-readImage";
+                        throw(ImageExeption(VALOR_FUERA_RANGO_NIVEL, s));
+                    }
 
                     imageIn >> content; //B
-                    blue[i][j] = atoi(content.c_str());
+                    value = atoi(content.c_str());
+                    if(isRangeLevel(value)){
+                        blue[i][j] = value;
+                    }else{
+                        const char* s= "BlueValue-readImage";
+                        throw(ImageExeption(VALOR_FUERA_RANGO_NIVEL), s);
+                    }
 
                 }else{
-
                     getline(imageIn, content);
                     i--;
-                    j--;
                 } //Si es un comentario se descarta el resto de linea
             }
 
@@ -273,45 +296,51 @@ void Image::colorToGraysScale(){
 //Se guarda la imagen
 void Image::saveImage(string path){
         ofstream imageOut(path.c_str(), ios::binary);
-        string content="";
-
         if(!path.substr(path.length()-4, 4).compare(".pgm")){ //Si la ruta es una imagen en escala de grises
-                content+="P2\n# Pruebas Procesamiento de Imagenes \n";
-                //content+=(boost::lexical_cast<string>(height)+" "+boost::lexical_cast<string>(width)+"\n");
-                //content+=(boost::lexical_cast<string>(level)+"L\n");
+            imageOut << "P2\n# Pruebas Procesamiento de Imagenes \n";
+            imageOut << height << " " << width << "\n";
+            imageOut << level << "\n";
 
-                for(int i=0; i<height; i++){
-                        for(int j=0; j<width; j++)
-                                //content+=(boost::lexical_cast<string>(round(graysScale[i][j]))+"\t");
-                        content+="\n";
+            for(int i=0; i<height; i++){
+                for(int j=0; j<width; j++){
+                    int value = round(graysScale[i][j]);
+                    if(isRangeLevel(value)){
+                        imageOut << value << "\t";
+                    }else{
+                        const char* s= "GrayValue-saveImage";
+                        throw ImageExeption(VALOR_FUERA_RANGO_NIVEL, s);
+                    }
+
                 }
+                imageOut <<"\n";
+            }
 
-                imageOut << content;
-
-                imageOut.close();
-        }
-
-        if(!path.substr(path.length()-4, 4).compare(".ppm")){ //Si la ruta es una imagen a color
-                content+="P3\n# Pruebas Procesamiento de Imagenes\n";
-                //content+=(boost::lexical_cast<string>(height)+" "+boost::lexical_cast<string>(width)+"\n");
-                //content+=(boost::lexical_cast<string>(level)+"\n");
+            imageOut.close();
+        }else if(!path.substr(path.length()-4, 4).compare(".ppm")){ //Si la ruta es una imagen a color
+                imageOut << "P3\n# Pruebas Procesamiento de Imagenes\n";
+                imageOut << height << " " << width << "\n";
+                imageOut << level << "\n";
 
                 for(int i=0; i<height; i++){
                         for(int j=0; j<width; j++){
-                                //content+=(boost::lexical_cast<string>(round(red[i][j]))+" ");
-                                //content+=(boost::lexical_cast<string>(round(green[i][j]))+" ");
-                                //content+=(boost::lexical_cast<string>(round(blue[i][j]))+"\t");
+                            int valueRed = round(red[i][j]), valueBlue = round(blue[i][j]), valueGreen = round(green[i][j]);
+                            if(isRangeLevel(valueRed) && isRangeLevel(valueBlue) &&isRangeLevel(valueGreen)){
+                                imageOut << valueRed << " " << valueGreen << " " << valueBlue << "\t";
+                            }else{
+                                const char* s= "ColorValue-saveImage";
+                                throw ImageExeption(VALOR_FUERA_RANGO_NIVEL, s);
+                            }
                         }
-                        content+="\n";
+                        imageOut << "\n";
                 }
 
-                imageOut << content;
-
                 imageOut.close();
-        }
-        if(path.substr(path.length()-4, 4).compare(".pgm") && path.substr(path.length()-4, 4).compare(".ppm")){ //Si la ruta de la imagen esta en otro formato
+                cout << "La imagen se guardo correctamente";
+        }else if(path.substr(path.length()-4, 4).compare(".pgm") && path.substr(path.length()-4, 4).compare(".ppm")){ //Si la ruta de la imagen esta en otro formato
                 imageOut.close();
-                cerr << "Error: ¡La ruta de la imagen no es valida!\n";
+                const char* s= "saveImage";
+                throw ImageExeption(EXTENSION_DESCONOCIDA, s);
+                //cerr << "Error: ¡La ruta de la imagen no es valida!\n";
         }
 }
 
@@ -320,6 +349,10 @@ void Image::saveImage(string path){
 int Image::round(double number){
 
     return floor(number+0.5);
+}
+
+bool Image::isRangeLevel(int number){
+    return (number>=0 && number<=this->level);
 }
 
 
