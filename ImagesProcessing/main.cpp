@@ -6,9 +6,9 @@ int main(int argc, char *argv[])
 
     try{
 
-        Image image("../ImagenesPrueba/lena.ascii.pgm");
+        Image image("../ImagenesPrueba/pie.ppm");
 
-        image.saveImage("../ImagenesPrueba/prueba.pgm");
+        image.saveImage("../ImagenesPrueba/piecopia.ppm");
 
     }catch(ImageExeption& e){
         cerr << e.getDescription()<< ": " <<e.what();

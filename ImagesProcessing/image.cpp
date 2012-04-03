@@ -1,4 +1,4 @@
-#include "image.h"
+    #include "image.h"
 
 const double Wr=0.299, Wg=0.587, Wb=0.114, Umax=0.436, Vmax=0.615; //Definicion de constantes
 
@@ -50,7 +50,7 @@ void Image::readImage()
         }else getline(imageIn, content); //Si es un comentario se descarta el resto de linea
     }
 
-    if(this->type.compare("P2") != 0 || this->type.compare("P5") !=0 ){ //Si la imagen es en escala de grises
+    if(!this->type.compare("P2")){ //Si la imagen es en escala de grises
 
         this->graysScale.resize(this->height);
         for(int i=0; i<this->height; i++)
@@ -64,6 +64,7 @@ void Image::readImage()
 
                 if(content.substr(0, 1).compare("#")){ //Si la linea no es un comentario se guardan los datos
                     int value = atoi(content.c_str());
+
                     if(isRangeLevel(value)){
                         this->graysScale[i][j]=value;
                     }else{
@@ -79,12 +80,13 @@ void Image::readImage()
         }
 
         cout << "Bien: ¡La imagen se leyo correctamente" << endl;
-    }else{	//Si la imagen es a color
+    }else if(!this->type.compare("P3")){	//Si la imagen es a color
 
         //Se le dan tamaño a las matrices RGB
         this->red.resize(this->height);
         this->green.resize(this->height);
         this->blue.resize(this->height);
+
         for(int i=0; i<this->height; i++){
                 this->red[i].resize(this->width);
                 this->green[i].resize(this->width);
@@ -95,15 +97,17 @@ void Image::readImage()
 
         for(int i=0; i<this->height;i++){
 
-            for(int j=0; i<this->width;j++){
+            for(int j=0; j<this->width;j++){
 
                 if(content.substr(0, 1).compare("#")){ //Si la linea no es un comentario se guardan los datos
 
                     int value;
                     imageIn >> content; //R
                     value = atoi(content.c_str());
+
+
                     if(isRangeLevel(value)){
-                        red[i][j] = value;
+                         red[i][j] = value;
                     }else{
                         const char* s= "RedValue-readImage";
                         throw(ImageExeption(VALOR_FUERA_RANGO_NIVEL), s);
@@ -134,6 +138,23 @@ void Image::readImage()
             }
 
         }
+
+
+    }else if(!this->type.compare("P5")){
+
+        //Lectura P5
+
+
+
+
+
+
+    }else if(!this->type.compare("P6")){
+
+        //Lectura P6
+
+
+
 
     }
 
@@ -293,8 +314,13 @@ void Image::colorToGraysScale(){
 
 //Se guarda la imagen
 void Image::saveImage(string path){
+
+
         ofstream imageOut(path.c_str(), ios::binary);
         if(!path.substr(path.length()-4, 4).compare(".pgm")){ //Si la ruta es una imagen en escala de grises
+
+            if(!this->type.compare("P2"))
+            {
             imageOut << "P2\n# Pruebas Procesamiento de Imagenes \n";
             imageOut << height << " " << width << "\n";
             imageOut << level << "\n";
@@ -312,13 +338,24 @@ void Image::saveImage(string path){
                 }
                 imageOut <<"\n";
             }
+            }else if(!this->type.compare("P5"))
+            {
+                    //Escritura de imagen para P5
+
+            }else
+            {
+                    //Tipo de imagen no corresponde a la extension dada
+            }
 
             imageOut.close();
         }else if(!path.substr(path.length()-4, 4).compare(".ppm")){ //Si la ruta es una imagen a color
+
+            if(!this->type.compare("P3"))
+            {
+
                 imageOut << "P3\n# Pruebas Procesamiento de Imagenes\n";
                 imageOut << height << " " << width << "\n";
                 imageOut << level << "\n";
-
                 for(int i=0; i<height; i++){
                         for(int j=0; j<width; j++){
                             int valueRed = round(red[i][j]), valueBlue = round(blue[i][j]), valueGreen = round(green[i][j]);
@@ -331,7 +368,17 @@ void Image::saveImage(string path){
                         }
                         imageOut << "\n";
                 }
+            }else if(!this->type.compare("P6"))
+            {
 
+                    //Escritura de imagen para P6
+
+            }else
+            {
+
+                    //Tipo de imagen no corresponde a la extension dada
+
+            }
                 imageOut.close();
                 cout << "La imagen se guardo correctamente";
         }else if(path.substr(path.length()-4, 4).compare(".pgm") && path.substr(path.length()-4, 4).compare(".ppm")){ //Si la ruta de la imagen esta en otro formato
