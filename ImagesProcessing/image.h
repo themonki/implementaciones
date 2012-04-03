@@ -29,7 +29,6 @@ private:
     string type;
     string path;
     void readImage();
-    int round(double number);
 
 public:
     Image(string path);
@@ -63,6 +62,9 @@ public:
     bool isRangeLevel(int);
 
     matrix scaleImage(int, int);
+
+    int round(double number);
+
 
 };
 
