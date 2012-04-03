@@ -171,12 +171,9 @@ void Image::readImage()
             }
 
         delete [] charImage;
-
         this->type = "P2";//esto se tiene que quitar para guardar en p5
 
-
         cout << "Bien: ¡La imagen se leyo correctamente " << this->type<< endl;
-
 
     }else if(!this->type.compare("P6")){
 
