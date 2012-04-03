@@ -14,4 +14,7 @@ Implementar metodo que permita ecualizar.
 
 Implementar Filtros.
 
+Aprender DCMTK.
+
+Leer un archivo DICOM y guardarlo o pasarlo a formato ppm o pgm.
 
