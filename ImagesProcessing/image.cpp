@@ -139,14 +139,43 @@ void Image::readImage()
 
         }
 
+        cout << "Bien: ¡La imagen se leyo correctamente" << endl;
 
     }else if(!this->type.compare("P5")){
 
         //Lectura P5
+        this->graysScale.resize(this->height);
+        for(int i=0; i<this->height; i++)
+                this->graysScale[i].resize(this->width);
 
 
+        unsigned char *charImage = (unsigned char *) new unsigned char [this->height*this->width];  //creates 2D array
+        imageIn.read( reinterpret_cast<char *>(charImage), (this->height*this->width)*sizeof(unsigned char));  //reads in 2D array
+
+        if (imageIn.fail())
+        {
+            //arrojar expecion de rango de datos o noc
+            //cout << "Image " << 34 << " has wrong size" << endl;
+        }
+
+        imageIn.close();
+        // Convert the unsigned characters to integers
+
+        int val;
+
+        for(int i=0; i<this->height; i++)
+            for(int j=0; j<this->width; j++)
+            {
+                val = (int)charImage[i*this->width+j];
+                this->graysScale[i][j]= val;
+            }
+
+        delete [] charImage;
+
+        this->type = "P2";//esto se tiene que quitar para guardar en p5
 
 
+        cout << "Bien: ¡La imagen se leyo correctamente " << this->type<< endl;
 
 
     }else if(!this->type.compare("P6")){
@@ -154,6 +183,7 @@ void Image::readImage()
         //Lectura P6
 
 
+        cout << "Bien: ¡La imagen se leyo correctamente" << endl;
 
 
     }
@@ -380,13 +410,15 @@ void Image::saveImage(string path){
 
             }
                 imageOut.close();
-                cout << "La imagen se guardo correctamente";
         }else if(path.substr(path.length()-4, 4).compare(".pgm") && path.substr(path.length()-4, 4).compare(".ppm")){ //Si la ruta de la imagen esta en otro formato
                 imageOut.close();
                 const char* s= "saveImage";
                 throw ImageExeption(EXTENSION_DESCONOCIDA, s);
                 //cerr << "Error: ¡La ruta de la imagen no es valida!\n";
         }
+
+        cout << "La imagen se guardo correctamente";
+
 }
 
 
