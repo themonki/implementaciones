@@ -13,7 +13,7 @@ int main(int argc, char *argv[])
 
         Histogram histogram(image);
         Image imageHistogram = histogram.getImageHistogram();
-        imageHistogram.saveImage("../ImagenesPrueba/Lena.pgm");
+        imageHistogram.saveImage("../ImagenesPrueba/hystogramLena.pgm");
     }catch(ImageExeption& e){
         cerr << e.getDescription()<< ": " <<e.what();
     }catch(...){

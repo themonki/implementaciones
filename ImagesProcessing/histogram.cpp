@@ -30,23 +30,45 @@ vectorx Histogram::getHistogram()
 Image Histogram::getImageHistogram()
 {
     int higher =0;
+    int height = 256;
+    int width= 256;
+
     Image image;
-    image.setWidth(512);
+    image.setWidth(width);
+    image.setHeight(height);
     image.setType("P2");
-
-    for(unsigned int i=1; i<this->histogram.size(); i++)
-        if(this->histogram[i]>this->histogram[higher])
-            higher=i;
-
-    image.setHeight(1000);
     image.setLevel(1);
-    matrix values(1000, vectorx(512, 1));
+    matrix values(height, vectorx(width, 1));
 
-    for(unsigned int i=0; i<this->histogram.size(); i++)
-        for(unsigned int j=0; j<1000; j++)
-            if(j>=1000-(this->histogram[i]*1000/higher))
-                cout<<"*";
+    int size = this->histogram.size();
 
+    for(int i=1; i<size; i++)
+    {
+        int value = this->histogram[i];
+        if(value >higher)
+        {
+            higher=histogram[i];
+        }
+    }
+
+
+
+    for(int i=0; i<size; i++)
+    {
+
+        for(int j=0; j<height; j++)
+        {
+            int value = this->histogram[i];
+            if(j>=height-(value*height/higher))
+            {
+                  values[j][i]=0;
+
+            }
+
+        }
+
+
+    }
     image.setGraysScale(values);
 
     return image;

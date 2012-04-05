@@ -41,10 +41,10 @@ void Image::readImage()
 
             }
             if(count == 1){
-                this->height=atoi(content.c_str());
+                this->width=atoi(content.c_str());
             }
             if(count == 2){
-                this->width=atoi(content.c_str());
+                this->height=atoi(content.c_str());
             }
             if(count == 3){
                 this->level=atoi(content.c_str());
@@ -357,7 +357,7 @@ void Image::saveImage(string path){
             if(!this->type.compare("P2"))
             {
             imageOut << "P2\n# Pruebas Procesamiento de Imagenes \n";
-            imageOut << height << " " << width << "\n";
+            imageOut << width << " " << height << "\n";
             imageOut << level << "\n";
 
             for(int i=0; i<height; i++){
