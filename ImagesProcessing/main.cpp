@@ -1,4 +1,5 @@
-#include<image.h>
+#include "image.h"
+#include "histogram.h"
 
 int main(int argc, char *argv[])
 {
@@ -6,10 +7,13 @@ int main(int argc, char *argv[])
 
     try{
 
-        Image image("../ImagenesPrueba/pie.ppm");
+        Image image("../ImagenesPrueba/lena.pgm");
 
-        image.saveImage("../ImagenesPrueba/piecopia.ppm");
+        image.saveImage("../ImagenesPrueba/lenaPrueba.pgm");
 
+        Histogram histogram(image);
+        Image imageHistogram = histogram.getImageHistogram();
+        imageHistogram.saveImage("../ImagenesPrueba/Lena.pgm");
     }catch(ImageExeption& e){
         cerr << e.getDescription()<< ": " <<e.what();
     }catch(...){

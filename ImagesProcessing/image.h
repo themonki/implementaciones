@@ -31,6 +31,7 @@ private:
     void readImage();
 
 public:
+    Image();
     Image(string path);
 
     int getWidth();

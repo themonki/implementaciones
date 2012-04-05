@@ -32,8 +32,9 @@ Image Histogram::getImageHistogram()
     int higher =0;
     Image image;
     image.setWidth(512);
+    image.setType("P2");
 
-    for(int i=1; i<this->histogram.size(); i++)
+    for(unsigned int i=1; i<this->histogram.size(); i++)
         if(this->histogram[i]>this->histogram[higher])
             higher=i;
 
@@ -41,10 +42,10 @@ Image Histogram::getImageHistogram()
     image.setLevel(1);
     matrix values(1000, vectorx(512, 1));
 
-    for(int i=0; i<this->histogram.size(); i++)
-        for(int j=0; j<1000; j++)
+    for(unsigned int i=0; i<this->histogram.size(); i++)
+        for(unsigned int j=0; j<1000; j++)
             if(j>=1000-(this->histogram[i]*1000/higher))
-                values[j][i*2]=0;
+                cout<<"*";
 
     image.setGraysScale(values);
 

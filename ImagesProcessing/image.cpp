@@ -2,6 +2,10 @@
 
 const double Wr=0.299, Wg=0.587, Wb=0.114, Umax=0.436, Vmax=0.615; //Definicion de constantes
 
+Image::Image()
+{
+
+}
 
 Image::Image(string path)
 {
@@ -307,6 +311,10 @@ void Image::setGreen(matrix green){
 //Le asigna la matriz de azul a la imagen
 void Image::setBlue(matrix blue){
         this->blue=blue;
+}
+
+void Image::setType(string type){
+        this->type=type;
 }
 
 
