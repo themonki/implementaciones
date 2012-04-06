@@ -422,7 +422,7 @@ void Image::saveImage(string path){
                 //cerr << "Error: ¡La ruta de la imagen no es valida!\n";
         }
 
-        cout << "La imagen se guardo correctamente";
+        cout << "La imagen se guardo correctamente \n";
 
 }
 

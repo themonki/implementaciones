@@ -1,5 +1,6 @@
 #include "image.h"
 #include "histogram.h"
+#include "thresholding.h"
 
 int main(int argc, char *argv[])
 {
@@ -14,6 +15,16 @@ int main(int argc, char *argv[])
         Histogram histogram(image);
         Image imageHistogram = histogram.getImageHistogram();
         imageHistogram.saveImage("../ImagenesPrueba/hystogramLena.pgm");
+
+        Thresholding thresholding;
+        Image imageDospicos =  thresholding.applyDosPicos(image);
+        imageDospicos.saveImage("../ImagenesPrueba/thresholdingDosPicos.pgm");
+        Image imageOtsu =  thresholding.applyOtsu(image);
+        imageOtsu.saveImage("../ImagenesPrueba/thresholdingOtsu.pgm");
+        Image imagenIsodata =  thresholding.applyIsodata(image);
+        imagenIsodata.saveImage("../ImagenesPrueba/thresholdingIsodata.pgm");
+
+
     }catch(ImageExeption& e){
         cerr << e.getDescription()<< ": " <<e.what();
     }catch(...){
