@@ -1,0 +1,20 @@
+Esta guia busca mostrar como instalar correctamente dcmtk ya sea usando el gestor de paquetes de linux o descargando y compilando los fuentes desde la pagina principal de dcmtk.
+
+1. Usando el gestor de archivadores en este caso ubuntu procedemos a ejecutar el siguiente comando
+	sudo apt-get install dcmtk
+2. Lo siguiente es realizar pruebas correspondientes a la instalacion como realizar la conversiona  xml de una imagen dicom usando 
+los comandos que por defecto debieron haber queado funcioanndo despues de la instalacion. El comando para realizar esto es 
+ dcmxml image.dcm archivo.xml  lo que creara el archivo xml con la meta informacion de la imagen.
+3. Para realizar la prueba se recomienda probar con un archivo basico 	main.cpp
+
+y compilarlo de la siguiente forma
+g++ -c main.cpp -I/usr/local/include -Wno-deprecated -O3 -DHAVE_CONFIG_H
+g++ -o exe main.o -L/usr/local/lib -ldcmimgle -ldcmdata -loflog -lofstd -lz -lpthread
+
+de esta forma probamos que todas las librerias se encuentren correctamente y saber que podemos trabajar con dcmtk.
+4. Finalmente solo se deben realizar dos cambios en el Makefile de la carpeta donde se crea el ejecutable para trabajar de manera adecuada desde qt con estas librerias.
+
+Cualquier duda preguntar
+
+Yerminson.
+
