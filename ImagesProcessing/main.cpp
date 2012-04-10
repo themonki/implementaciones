@@ -35,6 +35,7 @@ int main(int argc, char *argv[])
 #include "image.h"
 #include "histogram.h"
 #include "thresholding.h"
+#include "histogramequalizer.h"
 
 
 int main(int argc, char *argv[])
@@ -43,21 +44,25 @@ int main(int argc, char *argv[])
 
     try{
 
-        Image image("../ImagenesPrueba/PruebaP5.pgm");
+        Image image("../ImagenesPrueba/lena.pgm");
 
-        image.saveImage("../ImagenesPrueba/PruebaP5prueba.pgm");
+        image.saveImage("../ImagenesPrueba/pruebalena.pgm");
 
         Histogram histogram(image);
         Image imageHistogram = histogram.getImageHistogram();
-        imageHistogram.saveImage("../ImagenesPrueba/hystogramPP5.pgm");
+        imageHistogram.saveImage("../ImagenesPrueba/hystogramLena.pgm");
 
         Thresholding thresholding;
         Image imageDospicos =  thresholding.applyDosPicos(image);
-        imageDospicos.saveImage("../ImagenesPrueba/thresholdingDosPicosP5.pgm");
+        imageDospicos.saveImage("../ImagenesPrueba/thresholdingDosPicosLena.pgm");
         Image imageOtsu =  thresholding.applyOtsu(image);
-        imageOtsu.saveImage("../ImagenesPrueba/thresholdingOtsuP5.pgm");
+        imageOtsu.saveImage("../ImagenesPrueba/thresholdingOtsuLena.pgm");
         Image imagenIsodata =  thresholding.applyIsodata(image);
-        imagenIsodata.saveImage("../ImagenesPrueba/thresholdingIsodataP5.pgm");
+        imagenIsodata.saveImage("../ImagenesPrueba/thresholdingIsodataLena.pgm");
+
+        HistogramEqualizer histogramEqualizer;
+        Image imageEqualizer = histogramEqualizer.applyEqulizer(image);
+        imageEqualizer.saveImage("../ImagenesPrueba/EqualizerLena.pgm");
 
 
     }catch(ImageExeption& e){
