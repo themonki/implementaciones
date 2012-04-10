@@ -1,4 +1,4 @@
-HEADERS += \
+    HEADERS += \
     image.h \
     histogram.h \
     thresholding.h \
@@ -10,3 +10,4 @@ SOURCES += \
     thresholding.cpp \
     main.cpp \
     imageexeption.cpp
+

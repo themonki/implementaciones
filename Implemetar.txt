@@ -8,7 +8,7 @@ Implementar una función para cambiar entre espacios de color
 
 Implementar una función de corrección Gamma
 
-Implementar metodos para thresholding (Isodata, Otsu, 2 picos(pero no es tan necesario))
+(Listo)Implementar metodos para thresholding (Isodata, Otsu, 2 picos(pero no es tan necesario))
 
 Implementar metodo que permita ecualizar.
 
