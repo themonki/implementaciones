@@ -1,33 +1,39 @@
-#ifndef HISTOGRAMEQUALIZER_H
-#define HISTOGRAMEQUALIZER_H
+#ifndef CONTRAST_H
+#define CONTRAST_H
 
 #include <histogram.h>
 
-class HistogramEqualizer
+class Contrast
 {
 
 private:
-    vectorx accumulativeValues;
-    vectorx functionValues;
+    int minimunLevel;
+    int maximunLevel;
+    double contrast;
     vectorx lookUpTable;
-    double sum;
-    void obtainSum(vectorx vectorHistogram);
+    void obtainContrast(Image& image);
 public:
-    HistogramEqualizer();
-    vectorx getAccumulativeValues();
-    vectorx getFunctionValues();
+    Contrast();
+
     vectorx getLookUpTable();
-    double getSum();
+    double getContrast();
+    int getMinimunLevel();
+    int getMaximulLevel();
 
-    void setAccumulativeValues(vectorx accumulativeValues);
-    void setFunctionValues(vectorx functionValues);
+
+
     void setLookUpTable(vectorx lookUpTable);
-    void setSum(double sum);
+    void setContrast(double contrast);
+    void setMinimunLevel(int minimunLevel);
+    void setMaximunLevel(int maximunLevel);
 
 
+    Image gammaCorrection(Image& image, double r);
+    Image contrastExpansion(Image& image);
+    Image improveContrast(Image& image, int option);
     Image applyEqulizer(Image& image);
 
 
 };
 
-#endif // HISTOGRAMEQUALIZER_H
+#endif // CONTRAST_H

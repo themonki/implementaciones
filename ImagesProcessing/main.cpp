@@ -35,7 +35,7 @@ int main(int argc, char *argv[])
 #include "image.h"
 #include "histogram.h"
 #include "thresholding.h"
-#include "histogramequalizer.h"
+#include "contrast.h"
 
 
 int main(int argc, char *argv[])
@@ -60,9 +60,20 @@ int main(int argc, char *argv[])
         Image imagenIsodata =  thresholding.applyIsodata(image);
         imagenIsodata.saveImage("../ImagenesPrueba/thresholdingIsodataLena.pgm");
 
-        HistogramEqualizer histogramEqualizer;
-        Image imageEqualizer = histogramEqualizer.applyEqulizer(image);
+        Contrast contrast;
+        Image imageEqualizer = contrast.applyEqulizer(image);
         imageEqualizer.saveImage("../ImagenesPrueba/EqualizerLena.pgm");
+
+        Image imageCorrectionGama = contrast.gammaCorrection(image,2.2);
+        imageCorrectionGama.saveImage("../ImagenesPrueba/CorrectionGamaLena.pgm");
+
+        Image imageExpansionContrast = contrast.contrastExpansion(image);
+        imageExpansionContrast.saveImage("../ImagenesPrueba/ExpansionContrastLena.pgm");
+
+        Image imageImproveContrast = contrast.improveContrast(image,0);
+        imageImproveContrast.saveImage("../ImagenesPrueba/ImproveContrastLena1.pgm");
+        imageImproveContrast = contrast.improveContrast(image,1);
+        imageImproveContrast.saveImage("../ImagenesPrueba/ImproveContrastLena2.pgm");
 
 
     }catch(ImageExeption& e){

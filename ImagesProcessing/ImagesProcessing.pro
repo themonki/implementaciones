@@ -3,8 +3,8 @@
     histogram.h \
     thresholding.h \
     imageexeption.h \
-    histogramequalizer.h \
-    filter.h
+    filter.h \
+    contrast.h
 
 SOURCES += \
     image.cpp \
@@ -12,5 +12,5 @@ SOURCES += \
     thresholding.cpp \
     main.cpp \
     imageexeption.cpp \
-    histogramequalizer.cpp \
-    filter.cpp
+    filter.cpp \
+    contrast.cpp
