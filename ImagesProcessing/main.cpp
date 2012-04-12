@@ -36,6 +36,7 @@ int main(int argc, char *argv[])
 #include "histogram.h"
 #include "thresholding.h"
 #include "contrast.h"
+#include "filter.h"
 
 
 int main(int argc, char *argv[])
@@ -74,6 +75,18 @@ int main(int argc, char *argv[])
         imageImproveContrast.saveImage("../ImagenesPrueba/ImproveContrastLena1.pgm");
         imageImproveContrast = contrast.improveContrast(image,1);
         imageImproveContrast.saveImage("../ImagenesPrueba/ImproveContrastLena2.pgm");
+
+        Filter filter;
+
+        Image image2("../ImagenesPrueba/noisy.pgm");
+        Image imageMedianFilter = filter.medianFilter(image2,3);
+        imageMedianFilter.saveImage("../ImagenesPrueba/Denoysing.pgm");
+
+
+        Image imageSigmaFilter = filter.sigmaFilter(image2,10);
+        imageSigmaFilter.saveImage("../ImagenesPrueba/Denoysing4.pgm");
+
+
 
 
     }catch(ImageExeption& e){
