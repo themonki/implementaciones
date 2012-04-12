@@ -58,6 +58,8 @@ public:
 
     void saveImage(string path);
 
+    void readDicomImage(string path);
+
     void colorToGraysScale();
 
     bool isRangeLevel(int);

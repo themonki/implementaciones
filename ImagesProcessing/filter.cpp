@@ -123,7 +123,7 @@ Image Filter::sigmaFilter(Image &image, int sigma)
             if ( no > 0 )
             {
                 grayScaleOuput[i][j] = sum/no ;
-                cout << grayScaleOuput[i][j] << "\n";
+//                cout << grayScaleOuput[i][j] << "\n";
             }
             else
             {

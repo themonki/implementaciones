@@ -85,6 +85,7 @@ int main(int argc, char *argv[])
 
         Image imageSigmaFilter = filter.sigmaFilter(image2,10);
         imageSigmaFilter.saveImage("../ImagenesPrueba/Denoysing4.pgm");
+        image.readDicomImage("asdasd");
 
 
 

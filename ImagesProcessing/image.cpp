@@ -1,4 +1,7 @@
-    #include "image.h"
+#include "image.h"
+#include "dcmtk/config/osconfig.h"
+#include "dcmtk/dcmdata/dctk.h"
+#include "dcmtk/dcmimgle/dcmimage.h"  /* gcc 3.4 needs this */
 
 const double Wr=0.299, Wg=0.587, Wb=0.114, Umax=0.436, Vmax=0.615; //Definicion de constantes
 
@@ -437,8 +440,55 @@ bool Image::isRangeLevel(int number){
     return (number>=0 && number<=this->level);
 }
 
+void Image::readDicomImage(string path)
+{
 
-/*matrix Image::scaleImage(int height2, int width2){
 
-}*/
+    DcmFileFormat fileformat;
+    OFCondition status = fileformat.loadFile("test.dcm");
+    if (status.good())
+    {
+      OFString patientName;
+      if (fileformat.getDataset()->findAndGetOFString(DCM_PatientName, patientName).good())
+      {
+        cout << "Patient's Name: " << patientName << endl;
+      } else
+        cerr << "Error: cannot access Patient's Name!" << endl;
+    } else
+      cerr << "Error: cannot read DICOM file (" << status.text() << ")" << endl;
+
+
+
+    DicomImage *image = new DicomImage("test.dcm");
+    if (image != NULL)
+    {
+      if (image->getStatus() == EIS_Normal)
+      {
+        Uint8 *pixelData = (Uint8 *)(image->getOutputData(8 /* bits per sample */));
+        if (pixelData != NULL)
+        {
+            int contador = 0;
+            for(int i=0;i<256;i++)
+            {
+                for(int j=0;j<256;j++)
+                {
+
+                    cout<< static_cast< int >( pixelData[contador] )<<"-";
+                    contador++;
+                }
+                cout << " \n";
+            }
+            cout<< contador;
+        }
+      } else
+        cerr << "Error: cannot load DICOM image (" << DicomImage::getString(image->getStatus()) << ")" << endl;
+    }
+    delete image;
+
+
+
+}
+
+
+
 
