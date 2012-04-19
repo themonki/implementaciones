@@ -49,7 +49,7 @@ int main(int argc, char *argv[])
 
         image.saveImage("../ImagenesPrueba/pruebalena.pgm");
 
-        Histogram histogram(image);
+        /*Histogram histogram(image);
         Image imageHistogram = histogram.getImageHistogram();
         imageHistogram.saveImage("../ImagenesPrueba/hystogramLena.pgm");
 
@@ -75,9 +75,10 @@ int main(int argc, char *argv[])
         imageImproveContrast.saveImage("../ImagenesPrueba/ImproveContrastLena1.pgm");
         imageImproveContrast = contrast.improveContrast(image,1);
         imageImproveContrast.saveImage("../ImagenesPrueba/ImproveContrastLena2.pgm");
+        /**/
 
         Filter filter;
-
+        /*
         Image image2("../ImagenesPrueba/noisy.pgm");
         Image imageMedianFilter = filter.medianFilter(image2,3);
         imageMedianFilter.saveImage("../ImagenesPrueba/Denoysing.pgm");
@@ -86,6 +87,12 @@ int main(int argc, char *argv[])
         Image imageSigmaFilter = filter.sigmaFilter(image2,10);
         imageSigmaFilter.saveImage("../ImagenesPrueba/Denoysing4.pgm");
         image.readDicomImage("asdasd");
+        /**/
+        Image imageNagao("../ImagenesPrueba/noisy2.pgm");
+        imageNagao.saveImage("../ImagenesPrueba/original.pgm");
+        Image imageNagao_MatsuyamaFilter = filter.nagao_MatsuyamaFilter(imageNagao,5);
+        imageNagao_MatsuyamaFilter.saveImage("../ImagenesPrueba/nagao_matsumayafilter.pgm");
+
 
 
 

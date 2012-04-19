@@ -8,6 +8,8 @@ public:
     Filter();
     Image medianFilter(Image& image, int n);
     Image sigmaFilter(Image& image, int sigma);
+    Image nagao_MatsuyamaFilter(Image& image, int win);
+
 };
 
 #endif // FILTER_H

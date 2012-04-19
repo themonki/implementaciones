@@ -1,7 +1,7 @@
 #include "filter.h"
 #include <algorithm>
 
-
+using namespace std;
 
 Filter::Filter()
 {
@@ -143,3 +143,123 @@ Image Filter::sigmaFilter(Image &image, int sigma)
 
     return imageOuput;
 }
+
+
+double* calculateVariance(matrix grayScaleInput, int posPixelX, int posPixelY, int win, int dif, int rest, int subwind){
+    double varianza;
+    double *result;
+    result = new double[2];
+
+    int count = ceil((double)(win)/2);// tamaño de la subventana
+    vector<double> nums;
+    double sum=0;
+    int posX = posPixelX-dif, posY = posPixelY-dif, posWind = floor((double)(win)/4);
+    //cout << posWind << endl;
+
+    if (subwind==1) {
+        posX = posX+posWind;
+    }else if(subwind==2){
+        posX = posX+posWind*2;
+    }else if(subwind==3){
+        posY = posY+posWind;
+    }else if(subwind==4){
+        posY = posY+posWind;
+        posX = posX+posWind;
+    }else if(subwind==5){
+        posY = posY+posWind;
+        posX = posX+posWind*2;
+    }else if(subwind==6){
+        posY = posY+posWind*2;
+    }else if(subwind==7){
+        posY = posY+posWind*2;
+        posX = posX+posWind;
+    }else if(subwind==8){
+        posY = posY+posWind*2;
+        posX = posX+posWind*2;
+    }/**/
+
+    //cerr << posX << " " << posY << " - " << posPixelX << " " <<posPixelY << endl;
+
+    for(int x = posX; x < posX+count; x++){
+        for(int y = posY; y < posY+count;y++){
+            if((x!=posPixelX) || (y!=posPixelY)){
+                double value = grayScaleInput[x][y];
+                nums.push_back(value);
+                sum += value;
+            }
+        }
+    }
+
+    double media = sum/(double)(nums.size());
+    count =0;
+    sum = 0.0;
+
+    for(int x = 0; x < nums.size();x++){
+        sum += (nums[count]-media)*(nums[count]-media);
+    }
+
+    varianza= sum / (double)(nums.size());
+
+    result[0] = varianza;
+    result[1] = media;
+
+    return result;
+
+}
+
+Image Filter::nagao_MatsuyamaFilter(Image &image, int win){
+    Image imageOuput;
+
+    int height = image.getHeight();
+    int width = image.getWidth();
+
+    imageOuput.setHeight(height);
+    imageOuput.setWidth(width);
+    imageOuput.setType(image.getType());
+    imageOuput.setLevel(image.getLevel());
+
+    matrix grayScaleInput = image.getGraysScale();
+    matrix grayScaleOuput = image.getGraysScale();
+
+
+    int dif = ceil((double)(win)/2) - (win%2),  rest = (win-dif)-1;
+    cout << dif<<"dif\n";
+    for(int x = dif; x < height-rest; x++){
+        for(int y = dif; y < width-rest; y++){
+            double *value, *temp;
+            value = new double[2];
+            value[0]=-1;
+            if(x<100 && y < 100){// esto ahi q quitarlo es solo para limitar
+                for(int subWind = 0 ; subWind<9 ; subWind++){//nueve subventanas
+                    //cout << subWind << "*********************+subwind"<<endl;
+                    temp = calculateVariance(grayScaleInput,x,y,win,dif,rest, subWind);
+                        if(value[0]==-1){
+                            value[1]=temp[1];
+                            value[0]=temp[0];
+                        }else{
+                            if(value[0]>temp[0]){
+                                value[0]=temp[0];
+                                value[1]=temp[1];
+                            }
+                        }
+
+                }
+                //cout << value[1] << endl;
+                grayScaleOuput[x][y]=value[1];
+            }else{
+                grayScaleOuput[x][y]=grayScaleInput[x][y];
+
+            }
+
+        }
+    }
+
+    imageOuput.setGraysScale(grayScaleOuput);
+
+    return imageOuput;
+
+}
+
+
+
+
