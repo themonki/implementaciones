@@ -8,10 +8,14 @@
 #include <cmath>
 #include <fstream>
 #include <cstdlib>
+#include "dcmtk/config/osconfig.h"
+#include "dcmtk/dcmdata/dctk.h"
+#include "dcmtk/dcmimgle/dcmimage.h"  /* gcc 3.4 needs this */
 #include "imageexeption.h"
 
 using namespace std;
 
+const double Wr=0.299, Wg=0.587, Wb=0.114;// Umax=0.436, Vmax=0.615; //Definicion de constantes
 
 typedef vector<vector <double> > matrix;
 
@@ -67,6 +71,8 @@ public:
     matrix scaleImage(int, int);
 
     int round(double number);
+
+    void clearImage();
 
 
 };

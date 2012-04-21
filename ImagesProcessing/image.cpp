@@ -1,12 +1,8 @@
 #include "image.h"
-#include "dcmtk/config/osconfig.h"
-#include "dcmtk/dcmdata/dctk.h"
-#include "dcmtk/dcmimgle/dcmimage.h"  /* gcc 3.4 needs this */
 
-#define HI(num) (((num) & 0x0000FF00) >> 8)
-#define LO(num) ((num) & 0x000000FF)
+//#define HI(num) (((num) & 0x0000FF00) >> 8)
+//#define LO(num) ((num) & 0x000000FF)
 
-const double Wr=0.299, Wg=0.587, Wb=0.114, Umax=0.436, Vmax=0.615; //Definicion de constantes
 
 Image::Image()
 {
@@ -485,7 +481,27 @@ void Image::saveImage(string path){
 
 }
 
+void Image::clearImage(){
+    //para limpiar todos los vectores y datos
+    for(int i = 0; i < height; i++){
+        this->blue[i].clear();
+        this->red[i].clear();
+        this->green[i].clear();
+        this->graysScale[i].clear();
 
+    }
+
+    this->blue.clear();
+    this->red.clear();
+    this->green.clear();
+    this->graysScale.clear();
+
+    this->width=0;
+    this->height=0;
+    this->type.clear();
+    this->level=0;
+    this->path.clear();
+}
 
 int Image::round(double number){
 
@@ -544,3 +560,5 @@ void Image::readDicomImage(string path)
 
 
 }
+
+

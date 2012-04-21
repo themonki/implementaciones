@@ -1,8 +1,6 @@
 #include "filter.h"
 #include <algorithm>
 
-using namespace std;
-
 Filter::Filter()
 {
 }
@@ -123,7 +121,7 @@ Image Filter::sigmaFilter(Image &image, int sigma)
             if ( no > 0 )
             {
                 grayScaleOuput[i][j] = sum/no ;
-//                cout << grayScaleOuput[i][j] << "\n";
+                //                cout << grayScaleOuput[i][j] << "\n";
             }
             else
             {
@@ -137,25 +135,19 @@ Image Filter::sigmaFilter(Image &image, int sigma)
 
     imageOuput.setGraysScale(grayScaleOuput);
 
-
-
-
-
     return imageOuput;
 }
 
 
-double* calculateVariance(matrix grayScaleInput, int posPixelX, int posPixelY, int win, int dif, int rest, int subwind){
+double* Filter::calculateVariance(matrix grayScaleInput, int posPixelX, int posPixelY, int win, int dif, int subwind){
     double varianza;
     double *result;
     result = new double[2];
-
     int count = ceil((double)(win)/2);// tamaño de la subventana
     vector<double> nums;
     double sum=0;
     int posX = posPixelX-dif, posY = posPixelY-dif, posWind = floor((double)(win)/4);
-    //cout << posWind << endl;
-
+    //la ubicacion de la ventana
     if (subwind==1) {
         posX = posX+posWind;
     }else if(subwind==2){
@@ -179,7 +171,7 @@ double* calculateVariance(matrix grayScaleInput, int posPixelX, int posPixelY, i
     }/**/
 
     //cerr << posX << " " << posY << " - " << posPixelX << " " <<posPixelY << endl;
-
+    //se obtienen los pixeles de la ventana para calcular
     for(int x = posX; x < posX+count; x++){
         for(int y = posY; y < posY+count;y++){
             if((x!=posPixelX) || (y!=posPixelY)){
@@ -194,7 +186,7 @@ double* calculateVariance(matrix grayScaleInput, int posPixelX, int posPixelY, i
     count =0;
     sum = 0.0;
 
-    for(int x = 0; x < nums.size();x++){
+    for(int x = 0; x < (int)nums.size();x++){
         sum += (nums[count]-media)*(nums[count]-media);
     }
 
@@ -232,7 +224,7 @@ Image Filter::nagao_MatsuyamaFilter(Image &image, int win){
             if(x<100 && y < 100){// esto ahi q quitarlo es solo para limitar
                 for(int subWind = 0 ; subWind<9 ; subWind++){//nueve subventanas
                     //cout << subWind << "*********************+subwind"<<endl;
-                    temp = calculateVariance(grayScaleInput,x,y,win,dif,rest, subWind);
+                    temp = calculateVariance(grayScaleInput,x,y,win,dif, subWind);
                         if(value[0]==-1){
                             value[1]=temp[1];
                             value[0]=temp[0];
@@ -242,7 +234,6 @@ Image Filter::nagao_MatsuyamaFilter(Image &image, int win){
                                 value[1]=temp[1];
                             }
                         }
-
                 }
                 //cout << value[1] << endl;
                 grayScaleOuput[x][y]=value[1];
