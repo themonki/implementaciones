@@ -3,6 +3,9 @@
 #include "dcmtk/dcmdata/dctk.h"
 #include "dcmtk/dcmimgle/dcmimage.h"  /* gcc 3.4 needs this */
 
+#define HI(num) (((num) & 0x0000FF00) >> 8)
+#define LO(num) ((num) & 0x000000FF)
+
 const double Wr=0.299, Wg=0.587, Wb=0.114, Umax=0.436, Vmax=0.615; //Definicion de constantes
 
 Image::Image()
@@ -61,7 +64,7 @@ void Image::readImage()
 
         this->graysScale.resize(this->height);
         for(int i=0; i<this->height; i++)
-                this->graysScale[i].resize(this->width);
+            this->graysScale[i].resize(this->width);
 
         for(int i=0;i<this->height;i++){ //Hasta que se haya llenado la matriz Y
 
@@ -95,9 +98,9 @@ void Image::readImage()
         this->blue.resize(this->height);
 
         for(int i=0; i<this->height; i++){
-                this->red[i].resize(this->width);
-                this->green[i].resize(this->width);
-                this->blue[i].resize(this->width);
+            this->red[i].resize(this->width);
+            this->green[i].resize(this->width);
+            this->blue[i].resize(this->width);
         }
 
 
@@ -114,7 +117,7 @@ void Image::readImage()
 
 
                     if(isRangeLevel(value)){
-                         red[i][j] = value;
+                        red[i][j] = value;
                     }else{
                         const char* s= "RedValue-readImage";
                         throw(ImageExeption(VALOR_FUERA_RANGO_NIVEL), s);
@@ -153,19 +156,19 @@ void Image::readImage()
         //Lectura P5
         this->graysScale.resize(this->height);
         for(int i=0; i<this->height; i++)
-                this->graysScale[i].resize(this->width);
+            this->graysScale[i].resize(this->width);
 
 
-        unsigned char *charImage = (unsigned char *) new unsigned char [this->height*this->width];  //creates 2D array
-        imageIn.read( reinterpret_cast<char *>(charImage), (this->height*this->width)*sizeof(unsigned char));  //reads in 2D array
+        //unsigned char *charImage = (unsigned char *) new unsigned char [this->height*this->width];  //creates 2D array
+        //imageIn.read( reinterpret_cast<char *>(charImage), (this->height*this->width)*sizeof(unsigned char));  //reads in 2D array
 
-        if (imageIn.fail())
-        {
-            //arrojar expecion de rango de datos o noc
-            //cout << "Image " << 34 << " has wrong size" << endl;
-        }
+        //if (imageIn.fail())
+        //{
+        //arrojar expecion de rango de datos o noc
+        //cout << "Image " << 34 << " has wrong size" << endl;
+        //}
 
-        imageIn.close();
+        //imageIn.close();
         // Convert the unsigned characters to integers
 
         int val;
@@ -173,22 +176,46 @@ void Image::readImage()
         for(int i=0; i<this->height; i++)
             for(int j=0; j<this->width; j++)
             {
-                val = (int)charImage[i*this->width+j];
+                val = imageIn.get();//(int)charImage[i*this->width+j];
                 this->graysScale[i][j]= val;
             }
 
-        delete [] charImage;
-        this->type = "P2";//esto se tiene que quitar para guardar en p5
+        //delete [] charImage;
 
         cout << "Bien: ¡La imagen se leyo correctamente " << this->type<< endl;
 
     }else if(!this->type.compare("P6")){
 
         //Lectura P6
+        this->blue.resize(this->height);
+        this->green.resize(this->height);
+        this->red.resize(this->height);
+        for(int i=0; i<this->height; i++){
+            this->blue[i].resize(this->width);
+            this->red[i].resize(this->width);
+            this->green[i].resize(this->width);
+        }
+
+        int val;
+        imageIn.get();
+        for(int i=0; i<this->height; i++)
+            for(int j=0; j<this->width; j++)
+            {
+                val = imageIn.get(); //(int)charImage[i*this->width+j];
+                this->red[i][j]= val;
+                val = imageIn.get();
+                this->green[i][j]= val;
+                val = imageIn.get();
+                this->blue[i][j]= val;
 
 
-        cout << "Bien: ¡La imagen se leyo correctamente" << endl;
 
+
+            }
+
+        //this->type = "P3";//esto se tiene que quitar para guardar en p6
+
+        cout << "Bien: ¡La imagen se leyo correctamente p6" << this->type<< endl;
 
     }
 
@@ -199,13 +226,13 @@ void Image::readImage()
 
 //Retorna el tipo de imagen (P2, P3, etc.)
 string Image::getType(){
-        return type;
+    return type;
 }
 
 
 //Retorna el ancho de la imagen
 int Image::getWidth(){
-        return width;
+    return width;
 }
 
 
@@ -214,7 +241,7 @@ int Image::getWidth(){
 
 //Retorna el alto de la imagen
 int Image::getHeight(){
-        return height;
+    return height;
 }
 
 
@@ -223,7 +250,7 @@ int Image::getHeight(){
 
 //Retorna la escala de color de la imagen
 int Image::getLevel(){
-        return level;
+    return level;
 }
 
 
@@ -232,7 +259,7 @@ int Image::getLevel(){
 
 //Retorna la matriz de rojo a la imagen
 matrix Image::getRed(){
-        return red;
+    return red;
 }
 
 
@@ -241,7 +268,7 @@ matrix Image::getRed(){
 
 //Retorna la matriz de verde a la imagen
 matrix Image::getGreen(){
-        return green;
+    return green;
 }
 
 
@@ -250,7 +277,7 @@ matrix Image::getGreen(){
 
 //Retorna la matriz de azul a la imagen
 matrix Image::getBlue(){
-        return blue;
+    return blue;
 }
 
 
@@ -259,7 +286,7 @@ matrix Image::getBlue(){
 
 //Le asigna la matriz de azul a la imagen
 matrix Image::getGraysScale(){
-        return graysScale;
+    return graysScale;
 }
 
 
@@ -268,7 +295,7 @@ matrix Image::getGraysScale(){
 
 //Le asigna el ancho de la imagen
 void Image::setWidth(int width){
-        this->width=width;
+    this->width=width;
 }
 
 
@@ -277,7 +304,7 @@ void Image::setWidth(int width){
 
 //Le asigna el alto de la imagen
 void Image::setHeight(int height){
-        this->height=height;
+    this->height=height;
 }
 
 
@@ -286,7 +313,7 @@ void Image::setHeight(int height){
 
 //Le asigna la escala de color de la imagen
 void Image::setLevel(int level){
-        this->level=level;
+    this->level=level;
 }
 
 
@@ -295,7 +322,7 @@ void Image::setLevel(int level){
 
 //Le asigna la matriz de rojo a la imagen
 void Image::setRed(matrix red){
-        this->red=red;
+    this->red=red;
 }
 
 
@@ -304,7 +331,7 @@ void Image::setRed(matrix red){
 
 //Le asigna la matriz de verde a la Imagen
 void Image::setGreen(matrix green){
-        this->green=green;
+    this->green=green;
 }
 
 
@@ -313,11 +340,11 @@ void Image::setGreen(matrix green){
 
 //Le asigna la matriz de azul a la imagen
 void Image::setBlue(matrix blue){
-        this->blue=blue;
+    this->blue=blue;
 }
 
 void Image::setType(string type){
-        this->type=type;
+    this->type=type;
 }
 
 
@@ -326,7 +353,7 @@ void Image::setType(string type){
 
 //Le asigna la matriz de grises a la imagen
 void Image::setGraysScale(matrix graysScale){
-        this->graysScale=graysScale;
+    this->graysScale=graysScale;
 }
 
 
@@ -335,15 +362,15 @@ void Image::setGraysScale(matrix graysScale){
 
 //Calcula la escala de grises de una imagen a color
 void Image::colorToGraysScale(){
-        //Se le dan tamaño a la matriz Y
-        this->graysScale.resize(this->height);
-        for(int i=0; i<this->height; i++)
-                this->graysScale[i].resize(this->width);
+    //Se le dan tamaño a la matriz Y
+    this->graysScale.resize(this->height);
+    for(int i=0; i<this->height; i++)
+        this->graysScale[i].resize(this->width);
 
-        //Se hacen las operaciones para hallar los valores de la matriz Y
-        for(int i=0; i<this->height; i++)
-                for(int j=0; j<this->width; j++)
-                        this->graysScale[i][j]=Wr*this->red[i][j]+Wg*this->green[i][j]+Wb*this->blue[i][j]; //Hallar Y
+    //Se hacen las operaciones para hallar los valores de la matriz Y
+    for(int i=0; i<this->height; i++)
+        for(int j=0; j<this->width; j++)
+            this->graysScale[i][j]=Wr*this->red[i][j]+Wg*this->green[i][j]+Wb*this->blue[i][j]; //Hallar Y
 }
 
 
@@ -354,11 +381,11 @@ void Image::colorToGraysScale(){
 void Image::saveImage(string path){
 
 
-        ofstream imageOut(path.c_str(), ios::binary);
-        if(!path.substr(path.length()-4, 4).compare(".pgm")){ //Si la ruta es una imagen en escala de grises
+    ofstream imageOut(path.c_str(), ios::out|ios::binary);
+    if(!path.substr(path.length()-4, 4).compare(".pgm")){ //Si la ruta es una imagen en escala de grises
 
-            if(!this->type.compare("P2"))
-            {
+        if(!this->type.compare("P2"))
+        {
             imageOut << "P2\n# Pruebas Procesamiento de Imagenes \n";
             imageOut << width << " " << height << "\n";
             imageOut << level << "\n";
@@ -377,56 +404,84 @@ void Image::saveImage(string path){
                 }
                 imageOut <<"\n";
             }
-            }else if(!this->type.compare("P5"))
-            {
-                    //Escritura de imagen para P5
+        }else if(!this->type.compare("P5"))
+        {
+            //Escritura de imagen para P5
 
-            }else
-            {
-                    //Tipo de imagen no corresponde a la extension dada
-            }
+            imageOut << "P5\n# Pruebas Procesamiento de Imagenes \n";
+            imageOut << width << " " << height << "\n";
+            imageOut << level << "\n";
+            unsigned char *image;
+            image = (unsigned char *) new unsigned char [this->height*this->width];
 
-            imageOut.close();
-        }else if(!path.substr(path.length()-4, 4).compare(".ppm")){ //Si la ruta es una imagen a color
+            for(int i=0; i<this->height; i++)
+                for(int j=0; j<this->width; j++)
+                    image[i*this->width+j]=(unsigned char)graysScale[i][j];
 
-            if(!this->type.compare("P3"))
-            {
 
-                imageOut << "P3\n# Pruebas Procesamiento de Imagenes\n";
-                imageOut << height << " " << width << "\n";
-                imageOut << level << "\n";
-                for(int i=0; i<height; i++){
-                        for(int j=0; j<width; j++){
-                            int valueRed = round(red[i][j]), valueBlue = round(blue[i][j]), valueGreen = round(green[i][j]);
-                            if(isRangeLevel(valueRed) && isRangeLevel(valueBlue) &&isRangeLevel(valueGreen)){
-                                imageOut << valueRed << " " << valueGreen << " " << valueBlue << "\t";
-                            }else{
-                                const char* s= "ColorValue-saveImage";
-                                throw ImageExeption(VALOR_FUERA_RANGO_NIVEL, s);
-                            }
-                        }
-                        imageOut << "\n";
-                }
-            }else if(!this->type.compare("P6"))
-            {
 
-                    //Escritura de imagen para P6
+            imageOut.write( reinterpret_cast<char *>(image), (this->width*this->height)*sizeof(unsigned char));
+            delete [] image;
 
-            }else
-            {
 
-                    //Tipo de imagen no corresponde a la extension dada
-
-            }
-                imageOut.close();
-        }else if(path.substr(path.length()-4, 4).compare(".pgm") && path.substr(path.length()-4, 4).compare(".ppm")){ //Si la ruta de la imagen esta en otro formato
-                imageOut.close();
-                const char* s= "saveImage";
-                throw ImageExeption(EXTENSION_DESCONOCIDA, s);
-                //cerr << "Error: ¡La ruta de la imagen no es valida!\n";
+        }else
+        {
+            //Tipo de imagen no corresponde a la extension dada
         }
 
-        cout << "La imagen se guardo correctamente \n";
+        imageOut.close();
+    }else if(!path.substr(path.length()-4, 4).compare(".ppm")){ //Si la ruta es una imagen a color
+
+        if(!this->type.compare("P3"))
+        {
+            imageOut << "P3\n# Pruebas Procesamiento de Imagenes\n";
+            imageOut << height << " " << width << "\n";
+            imageOut << level << "\n";
+            for(int i=0; i<height; i++){
+                for(int j=0; j<width; j++){
+                    int valueRed = round(red[i][j]), valueBlue = round(blue[i][j]), valueGreen = round(green[i][j]);
+                    if(isRangeLevel(valueRed) && isRangeLevel(valueBlue) &&isRangeLevel(valueGreen)){
+                        imageOut << valueRed << " " << valueGreen << " " << valueBlue << "\t";
+                        //cerr << valueRed << " " << valueGreen << " " << valueBlue << "\t";
+                    }else{
+                        const char* s= "ColorValue-saveImage";
+                        throw ImageExeption(VALOR_FUERA_RANGO_NIVEL, s);
+                    }
+                }
+                imageOut << "\n";
+            }
+        }else if(!this->type.compare("P6"))
+        {
+
+            //Escritura de imagen para P6
+
+            imageOut << "P6\n# Pruebas Procesamiento de Imagenes \n";
+            imageOut << width << " " << height << "\n";
+            imageOut << level << "\n";
+
+            for(int i=0; i<this->height; i++)
+                for(int j=0; j<this->width; j++){
+
+                    imageOut.put((unsigned char)red[i][j]);
+                    imageOut.put((unsigned char)green[i][j]);
+                    imageOut.put((unsigned char)blue[i][j]);
+
+                }
+        }else
+        {
+
+            //Tipo de imagen no corresponde a la extension dada
+
+        }
+        imageOut.close();
+    }else if(path.substr(path.length()-4, 4).compare(".pgm") && path.substr(path.length()-4, 4).compare(".ppm")){ //Si la ruta de la imagen esta en otro formato
+        imageOut.close();
+        const char* s= "saveImage";
+        throw ImageExeption(EXTENSION_DESCONOCIDA, s);
+        //cerr << "Error: ¡La ruta de la imagen no es valida!\n";
+    }
+
+    cout << "La imagen se guardo correctamente \n";
 
 }
 
@@ -449,47 +504,43 @@ void Image::readDicomImage(string path)
     OFCondition status = fileformat.loadFile("test.dcm");
     if (status.good())
     {
-      OFString patientName;
-      if (fileformat.getDataset()->findAndGetOFString(DCM_PatientName, patientName).good())
-      {
-        cout << "Patient's Name: " << patientName << endl;
-      } else
-        cerr << "Error: cannot access Patient's Name!" << endl;
+        OFString patientName;
+        if (fileformat.getDataset()->findAndGetOFString(DCM_PatientName, patientName).good())
+        {
+            cout << "Patient's Name: " << patientName << endl;
+        } else
+            cerr << "Error: cannot access Patient's Name!" << endl;
     } else
-      cerr << "Error: cannot read DICOM file (" << status.text() << ")" << endl;
+        cerr << "Error: cannot read DICOM file (" << status.text() << ")" << endl;
 
 
 
     DicomImage *image = new DicomImage("test.dcm");
     if (image != NULL)
     {
-      if (image->getStatus() == EIS_Normal)
-      {
-        Uint8 *pixelData = (Uint8 *)(image->getOutputData(8 /* bits per sample */));
-        if (pixelData != NULL)
+        if (image->getStatus() == EIS_Normal)
         {
-            int contador = 0;
-            for(int i=0;i<256;i++)
+            Uint8 *pixelData = (Uint8 *)(image->getOutputData(8 /* bits per sample */));
+            if (pixelData != NULL)
             {
-                for(int j=0;j<256;j++)
+                int contador = 0;
+                for(int i=0;i<256;i++)
                 {
+                    for(int j=0;j<256;j++)
+                    {
 
-                    cout<< static_cast< int >( pixelData[contador] )<<"-";
-                    contador++;
+                        cout<< static_cast< int >( pixelData[contador] )<<"-";
+                        contador++;
+                    }
+                    cout << " \n";
                 }
-                cout << " \n";
+                cout<< contador;
             }
-            cout<< contador;
-        }
-      } else
-        cerr << "Error: cannot load DICOM image (" << DicomImage::getString(image->getStatus()) << ")" << endl;
+        } else
+            cerr << "Error: cannot load DICOM image (" << DicomImage::getString(image->getStatus()) << ")" << endl;
     }
     delete image;
 
 
 
 }
-
-
-
-

@@ -14,3 +14,15 @@ SOURCES += \
     imageexeption.cpp \
     filter.cpp \
     contrast.cpp
+
+QMAKE_CXXFLAGS += -DHAVE_CONFIG_H
+
+unix:!macx:!symbian: LIBS += -ldcmimgle
+
+unix:!macx:!symbian: LIBS += -ldcmdata
+
+unix:!macx:!symbian: LIBS += -loflog
+
+unix:!macx:!symbian: LIBS += -lofstd
+
+unix:!macx:!symbian: LIBS += -lz
