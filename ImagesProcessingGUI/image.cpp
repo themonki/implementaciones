@@ -392,7 +392,7 @@ void Image::saveImage(string path){
                     if(isRangeLevel(value)){
                         imageOut << value << "\t";
                     }else{
-                        cout << value << " - "<<graysScale[i][j] << " - "<< i << " - "<<j << endl;
+                        //cout << value << " - "<<graysScale[i][j] << " - "<< i << " - "<<j << endl;
                         const char* s= "GrayValue-saveImage";
                         throw ImageExeption(VALOR_FUERA_RANGO_NIVEL, s);
                     }

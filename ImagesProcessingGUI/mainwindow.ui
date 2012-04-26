@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>640</width>
-    <height>480</height>
+    <width>1100</width>
+    <height>600</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,15 +17,15 @@
    <widget class="QWidget" name="horizontalLayoutWidget">
     <property name="geometry">
      <rect>
-      <x>20</x>
-      <y>30</y>
-      <width>601</width>
-      <height>381</height>
+      <x>30</x>
+      <y>20</y>
+      <width>611</width>
+      <height>361</height>
      </rect>
     </property>
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
-      <widget class="QLabel" name="labelImageIn">
+      <widget class="QLabel" name="labelImageOut">
        <property name="text">
         <string/>
        </property>
@@ -48,7 +48,7 @@
       </spacer>
      </item>
      <item>
-      <widget class="QLabel" name="labelImageOut">
+      <widget class="QLabel" name="labelImageIn">
        <property name="text">
         <string/>
        </property>
@@ -56,13 +56,15 @@
      </item>
     </layout>
    </widget>
+   <zorder>horizontalLayoutWidget</zorder>
+   <zorder>labelImageOut</zorder>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>640</width>
+     <width>1100</width>
      <height>25</height>
     </rect>
    </property>

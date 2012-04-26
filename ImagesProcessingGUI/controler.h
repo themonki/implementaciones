@@ -2,23 +2,31 @@
 #define CONTROLER_H
 
 #include <QImage>
+#include <QColor>
+#include <QString>
 #include "image.h"
 
 
 class Controler
 {
 private:
-    Image image;
-    QImage imageIn;
-    QImage imageOut;
+    Image* imageIn;
+    Image* imageOut;
+    QImage* imageInLabel;
+    QImage* imageOutLabel;
+    QImage* convertImageIn();
+    QImage* convertImageOut();
+    QImage* convertImage(Image*);
+    bool ppmImage;
+    bool dicomImage;
 public:
     Controler();
-    void openImage(string);
-    void saveImage(string);
-    void setImageIn(Image);
-    void setImageOut(Image);
-    QImage getImageIn();
-    QImage getImageOut();
+    void openImage(QString);
+    void saveImage(QString, QImage*);
+    void setImageIn(QImage*);
+    void setImageOut(QImage*);
+    QImage* getImageIn();
+    QImage* getImageOut();
 
 };
 

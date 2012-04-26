@@ -91,8 +91,14 @@ void MainWindow::openFile(){
         return;
     }
     this->path=temp;
-    this->controler.openImage(path.toStdString());
+    this->controler.openImage(path);
     this->menuSaveFile->setEnabled(true);
+
+
+    ui->labelImageIn->setPixmap(QPixmap::fromImage(*controler.getImageIn()));    
+    ui->labelImageIn->setScaledContents(true);
+    ui->labelImageOut->setPixmap(QPixmap::fromImage(*controler.getImageIn()));
+    ui->labelImageOut->setScaledContents(true);
 
 }
 
@@ -101,6 +107,6 @@ void MainWindow::saveFile(){
     if(temp.isNull()){
         return;
     }
-    this->controler.saveImage(temp.toStdString());
+    this->controler.saveImage(temp, controler.getImageOut());
     this->menuSaveFile->setStatusTip(tr("El archivo se ha guardado correctamente"));
 }
