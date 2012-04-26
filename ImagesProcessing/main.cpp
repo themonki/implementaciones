@@ -45,9 +45,9 @@ int main(int argc, char *argv[])
 
     try{
         cout << "hola";
-        //Image image("../ImagenesPrueba/lena256.ppm");
+        Image image("../ImagenesPrueba/lena256.ppm");
 
-        //image.saveImage("../ImagenesPrueba/pruebap6.ppm");
+        image.saveImage("../ImagenesPrueba/pruebap6.ppm");
 
         /*Histogram histogram(image);
         Image imageHistogram = histogram.getImageHistogram();
