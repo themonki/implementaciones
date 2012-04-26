@@ -152,7 +152,20 @@ void MainWindow::openFile(){
 }
 
 void MainWindow::saveFile(){
-    QString temp = QFileDialog::getSaveFileName(this,"Seleccionar lugar y nombre del archivo", this->path, "Imagenes pgm o Dicom (*.pgm *.ppm *dcm)");
+
+    if(controler.isDicomImage()){
+
+        QString temp = QFileDialog::getSaveFileName(this,"Seleccionar lugar y nombre del archivo", this->path, "Imagenes ppm (*.ppm)");
+        if(temp.isNull()){
+            return;
+        }
+        this->controler.saveImage(temp, controler.getImageOut());
+        this->menuSaveFile->setStatusTip(tr("El archivo se ha guardado correctamente"));
+
+        return;
+
+    }
+    QString temp = QFileDialog::getSaveFileName(this,"Seleccionar lugar y nombre del archivo", this->path, "Imagenes pgm (*.pgm *.ppm)");
     if(temp.isNull()){
         return;
     }

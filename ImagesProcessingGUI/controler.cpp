@@ -2,9 +2,21 @@
 
 Controler::Controler()
 {
+    this->dicomImage=false;
+    this->ppmImage=false;
 }
 
 void Controler::openImage(QString path){
+
+
+    if(!path.toStdString().substr(path.toStdString().length()-4, 4).compare(".dcm")){
+        this->dicomImage=true;
+        this->ppmImage=true;
+        this->imageOut->readDicomImage(path.toStdString());
+        this->imageIn->readDicomImage(path.toStdString());
+        return;
+    }
+
     imageIn = new Image(path.toStdString());
     imageOut = new Image(path.toStdString());
 
@@ -33,6 +45,8 @@ void Controler::openImage(QString path){
 
 }
 void Controler::saveImage(QString path, QImage img){
+
+
     /*Image* img;
     img = new Image();
 
@@ -199,3 +213,6 @@ QImage Controler::getHistogram(){
     //cout <<  QDir::currentPath().append("/file.pgm").toStdString()<<endl << endl;
     return imgcopy;
 }
+
+bool Controler::isDicomImage(){return dicomImage;}
+bool Controler::isppmImage(){return ppmImage;}

@@ -33,6 +33,8 @@ public:
     void applyFilterSigma(int sigma);
     void applyFilterMedian(int);
     QImage getHistogram();
+    bool isDicomImage();
+    bool isppmImage();
 
 };
 
