@@ -8,12 +8,13 @@
 int main(int argc, char *argv[])
 {
      Image imagen;
-     imagen.readDicomImage("../ImagenesPrueba/DCMTKSamples/brain.dcm");
+     //imagen.readDicomImage("../ImagenesPrueba/DCMTKSamples/brain.dcm");
     //image.saveImage("../ImagenesPrueba/guardeP6.ppm");
 
     try{
 
         //Image image("../ImagenesPrueba/lena256.ppm");
+
 
         //image.saveImage("../ImagenesPrueba/pruebap6.ppm");
 
