@@ -28,17 +28,23 @@ private:
     QString path;
     QAction *menuOpenFile;
     QAction *menuSaveFile;
+    QAction *menuApplyFilterSigma;
+    QAction *menuApplyFilterMedian;
+    QAction *menuHistogramGet;
 
 
     Ui::MainWindow *ui;
     QMenu *fileMenu;
-    QMenu *editMenu;
-    QMenu *formatMenu;
+    QMenu *filterMenu;
+    QMenu *HistogramMenu;
     QMenu *helpMenu;
 
     void createMenus();
     QAction* createActionOpenFile();
     QAction* createActionSaveFile();
+    QAction* createActionFilterSigma();
+    QAction* createActionFilterMedian();
+    QAction* createActionHistogram();
 
 
 
@@ -46,6 +52,9 @@ private slots:
 
     void openFile();
     void saveFile();
+    void applyFilterSigma();
+    void applyFilterMedian();
+    void getHistogram();
 
 };
 

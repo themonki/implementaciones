@@ -15,6 +15,9 @@ MainWindow::MainWindow(QWidget *parent) :
     this->path = QDir::homePath();
     this->createMenus();
     ui->menubar->addMenu(this->fileMenu);
+    ui->menubar->addMenu(this->filterMenu);
+    ui->menubar->addMenu(this->HistogramMenu);
+
     setWindowTitle(tr("Image Processing"));
 
     /*************CENTRAR EN PANTALLA*************************/
@@ -71,13 +74,54 @@ QAction* MainWindow::createActionSaveFile()
      return act;
 }
 
+QAction* MainWindow::createActionFilterSigma()
+ {
+     QAction *act;
+     act = new QAction(tr("Filtro &Sigma"), this);
+     //act->setShortcuts(QKeySequence::SaveAs);
+     connect(act, SIGNAL(triggered()), this, SLOT(applyFilterSigma()));
+     act->setStatusTip(tr("Aplica el filtro sigma"));
+     this->menuApplyFilterSigma = act;
+     return act;
+}
+
+QAction* MainWindow::createActionFilterMedian()
+ {
+     QAction *act;
+     act = new QAction(tr("Filtro &Median"), this);
+     //act->setShortcuts(QKeySequence::SaveAs);
+     connect(act, SIGNAL(triggered()), this, SLOT(applyFilterMedian()));
+     act->setStatusTip(tr("Aplica el filtro de la media"));
+     this->menuApplyFilterMedian = act;
+     return act;
+}
+
+QAction* MainWindow::createActionHistogram()
+ {
+     QAction *act;
+     act = new QAction(tr("&Obtener Histograma"), this);
+     //act->setShortcuts(QKeySequence::SaveAs);
+     connect(act, SIGNAL(triggered()), this, SLOT(getHistogram()));
+     act->setStatusTip(tr("Calcula el histograma de la imagen en escala de grises"));
+     this->menuHistogramGet = act;
+     return act;
+}
 
 void MainWindow::createMenus(){
 
-    this->fileMenu = menuBar()->addMenu(tr("&Archivo"));
+    this->fileMenu = new QMenu(tr("&Archivo"));
     fileMenu->addAction(createActionOpenFile());
     fileMenu->addAction(createActionSaveFile());
     menuSaveFile->setEnabled(false);
+
+
+    this->filterMenu = new QMenu(tr("&Filtro"));
+    filterMenu->addAction(createActionFilterMedian());
+    filterMenu->addAction(createActionFilterSigma());
+
+    this->HistogramMenu = new QMenu(tr("&Histogram"));
+    HistogramMenu->addAction(createActionHistogram());
+
 
 
 }
@@ -95,10 +139,15 @@ void MainWindow::openFile(){
     this->menuSaveFile->setEnabled(true);
 
 
-    ui->labelImageIn->setPixmap(QPixmap::fromImage(*controler.getImageIn()));    
+    ui->labelImageIn->setPixmap(QPixmap::fromImage(controler.getImageIn()));
     ui->labelImageIn->setScaledContents(true);
-    ui->labelImageOut->setPixmap(QPixmap::fromImage(*controler.getImageIn()));
+    ui->labelImageOut->setPixmap(QPixmap::fromImage(controler.getImageIn()));
     ui->labelImageOut->setScaledContents(true);
+
+    ui->labelHistogram->setPixmap(QPixmap::fromImage(QImage()));
+    ui->labelImageIn->update();
+    ui->labelImageOut->update();
+    ui->labelHistogram->update();
 
 }
 
@@ -109,4 +158,29 @@ void MainWindow::saveFile(){
     }
     this->controler.saveImage(temp, controler.getImageOut());
     this->menuSaveFile->setStatusTip(tr("El archivo se ha guardado correctamente"));
+}
+
+void MainWindow::applyFilterMedian(){
+    this->controler.applyFilterMedian(3);
+    ui->labelImageOut->setPixmap(QPixmap::fromImage(controler.getImageOut()));
+    ui->labelImageOut->setStatusTip("Filtro Mediana Aplicado");
+    ui->labelImageOut->setScaledContents(true);
+    ui->labelImageOut->update();
+}
+
+void MainWindow::applyFilterSigma(){
+    this->controler.applyFilterSigma(10);
+    ui->labelImageOut->setPixmap(QPixmap::fromImage(controler.getImageOut()));
+    ui->labelImageOut->setStatusTip("Filtro Sigma Aplicado");
+    ui->labelImageOut->setScaledContents(true);
+    ui->labelImageOut->update();
+
+}
+
+void MainWindow::getHistogram(){
+    QImage a = controler.getHistogram();
+    ui->labelHistogram->setPixmap(QPixmap::fromImage(a));
+    ui->labelHistogram->setStatusTip("Histograma calculado");
+    ui->labelHistogram->setScaledContents(true);
+    ui->labelHistogram->update();
 }

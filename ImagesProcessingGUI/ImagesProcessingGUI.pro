@@ -14,12 +14,16 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     image.cpp \
     controler.cpp \
-    imageexeption.cpp
+    imageexeption.cpp \
+    filter.cpp \
+    histogram.cpp
 
 HEADERS  += mainwindow.h \
     image.h \
     controler.h \
-    imageexeption.h
+    imageexeption.h \
+    filter.h \
+    histogram.h
 
 FORMS    += mainwindow.ui
 

@@ -5,12 +5,25 @@ Controler::Controler()
 }
 
 void Controler::openImage(QString path){
-    imageIn = imageOut = new Image(path.toStdString());
+    imageIn = new Image(path.toStdString());
+    imageOut = new Image(path.toStdString());
 
-    QImage* i;
-    i = new QImage();
-    i->load(path);
-    this->imageInLabel = this->imageOutLabel = i;
+    QImage i, j;
+    i = QImage();
+    j = QImage();
+    i.load(path);
+    this->imageInLabel = i;
+    j.load(path);
+    this->imageOutLabel = j;
+
+    //cout << imageOutLabel.format()  <<" size " << imageOutLabel.width()<<"," << imageIn->getHeight() << " - " << imageIn->getWidth() <<","<<imageIn->getHeight() << endl;
+/*
+    for(int i = 0; i< image*In->getHeight(); i++){
+        for(int j = 0;j< imageIn->getWidth(); j++){
+            cout << qGray(imageinlabel.pixel(i,j)) << " este " << imageIn->getGraysScale()[i][j] << endl;
+
+        }}
+*/
 
     if(!imageIn->getType().compare("P2") || !imageIn->getType().compare("P5")){//pgm
         this->ppmImage=false;
@@ -19,99 +32,170 @@ void Controler::openImage(QString path){
     }
 
 }
-void Controler::saveImage(QString path, QImage* img){
-    /*Image* saveTemp;
-    saveTemp = new Image();
+void Controler::saveImage(QString path, QImage img){
+    /*Image* img;
+    img = new Image();
 
-    saveTemp->setHeight(imageIn->getHeight());
-    saveTemp->setWidth(imageIn->getWidth());
-    saveTemp->setLevel(imageIn->getLevel());
-    saveTemp->setType(imageIn->getType());
+    img->setHeight(imageIn->getHeight());
+    img->setWidth(imageIn->getWidth());
+    img->setLevel(imageIn->getLevel());
+    img->setType(imageIn->getType());
 
     if(!this->ppmImage){
         matrix gray;
-        gray.resize(saveTemp->getHeight());
-        for(int i=0; i<saveTemp->getHeight(); i++){
-            gray[i].resize(saveTemp->getWidth());
+        gray.resize(img->getHeight());
+        for(int i=0; i<img->getHeight(); i++){
+            gray[i].resize(img->getWidth());
         }
-        for(int i=0; i<saveTemp->getHeight(); i++){
-            for(int j = 0; j < saveTemp->getWidth();j++){
+        for(int i=0; i<img->getHeight(); i++){
+            for(int j = 0; j < img->getWidth();j++){
                 gray[i][j] = qGray(img->pixel(i,j));
 
             }
         }
 
-        saveTemp->setGraysScale(gray);
+        img->setGraysScale(gray);
 
     }else{
         matrix blue, red, green;
-        blue.resize(saveTemp->getHeight());
-        red.resize(saveTemp->getHeight());
-        green.resize(saveTemp->getHeight());
-        for(int i=0; i<saveTemp->getHeight(); i++){
-            blue[i].resize(saveTemp->getWidth());
-            green[i].resize(saveTemp->getWidth());
-            red[i].resize(saveTemp->getWidth());
+        blue.resize(img->getHeight());
+        red.resize(img->getHeight());
+        green.resize(img->getHeight());
+        for(int i=0; i<img->getHeight(); i++){
+            blue[i].resize(img->getWidth());
+            green[i].resize(img->getWidth());
+            red[i].resize(img->getWidth());
         }
-        for(int i=0; i<saveTemp->getHeight(); i++){
-            for(int j = 0; j < saveTemp->getWidth();j++){
+        for(int i=0; i<img->getHeight(); i++){
+            for(int j = 0; j < img->getWidth();j++){
                 blue[i][j] = qBlue(img->pixel(i,j));
                 green[i][j] = qGreen(img->pixel(i,j));
                 red[i][j] = qRed(img->pixel(i,j));
             }
         }
 
-        saveTemp->setBlue(blue);
-        saveTemp->setRed(red);
-        saveTemp->setGreen(green);
+        img->setBlue(blue);
+        img->setRed(red);
+        img->setGreen(green);
     }
 
 
-    saveTemp->saveImage(path.toStdString());*/
+    img->saveImage(path.toStdString());*/
 
     this->imageOut->saveImage(path.toStdString());
 }
 
-void Controler::setImageIn(QImage *i){
+void Controler::setImageIn(QImage i){
 
 }
 
-void Controler::setImageOut(QImage *i){
+void Controler::setImageOut(QImage i){
 
 }
 
-QImage* Controler::getImageIn(){
+QImage Controler::getImageIn(){
 
     return this->imageInLabel;
 }
 
-QImage* Controler::getImageOut(){
+QImage Controler::getImageOut(){
     return this->imageOutLabel;
 }
 
-QImage* Controler::convertImage(Image* image){
+QImage Controler::convertImage(Image & image, QImage & img){
 
 
-    QImage* img = new QImage(image->getHeight(), image->getWidth(),QImage::Format_Mono);
-    /*
-    for(int i = 0; i< image->getHeight(); i++){
-        for(int j = 0;j< image->getWidth(); j++){
+    cout << img.format()  <<" size " << img.width()<<"," << img.height() << " - " << imageIn->getWidth() <<","<<imageIn->getHeight() << endl;
 
-            uint temp =  (image->round(image->getGraysScale()[i][j]));
-            QColor *c = new QColor();
-            img->setPixel(temp);
+    for(int i = 0; i< img.height(); i++){
+        for(int j = 0;j< img.width(); j++){
+           // unsigned int x = image->round(image->getGraysScale()[i][j]);
+            //cout << image->round(image->getGraysScale()[i][j]) << " nuevo " << x << endl;
+            //if(i < 300  && j < 50){
+                unsigned int temp =   image.round(image.getGraysScale()[i][j]);
+                img.setPixel(j,i,temp);
+            //}else{
+             //   break;
+           // }
         }
     }
-*/
+    cerr << "terminamos"<<endl << endl;
+
+
     return img;
 
 }
 
-QImage* Controler::convertImageIn(){
-    return convertImage(this->imageIn);
+QImage Controler::convertImageIn(){
+    return convertImage(*this->imageIn, this->imageInLabel);
 }
 
-QImage* Controler::convertImageOut(){
-    return convertImage(this->imageIn);
+QImage Controler::convertImageOut(){
+    return convertImage(*this->imageOut, this->imageOutLabel);
 }
 
+void Controler::applyFilterSigma(int sigma){
+    Filter filtro;
+    /*Image img;
+    img.setHeight(imageOut->getHeight());
+    img.setWidth(imageOut->getWidth());
+    img.setLevel(imageOut->getLevel());
+    img.setType(imageOut->getType());
+    img.setBlue(imageOut->getBlue());
+    img.setRed(imageOut->getRed());
+    img.setGreen(imageOut->getGreen());
+    img.setGraysScale(imageOut->getGraysScale());*/
+    Image img, *temp;
+    img = filtro.sigmaFilter(*this->imageOut, sigma);
+    img.saveImage(QDir::currentPath().append("/file.pgm").toStdString());
+    this->imageOutLabel.load(QDir::currentPath().append("/file.pgm"));
+    temp = new Image(QDir::currentPath().append("/file.pgm").toStdString());
+    this->imageOut = temp;
+    /*
+
+    this->imageOut->setHeight(img.getHeight());
+    this->imageOut->setWidth(img.getWidth());
+    this->imageOut->setLevel(img.getLevel());
+    this->imageOut->setType(img.getType());
+    this->imageOut->setBlue(img.getBlue());
+    this->imageOut->setRed(img.getRed());
+    this->imageOut->setGreen(img.getGreen());
+    this->imageOut->setGraysScale(img.getGraysScale());
+
+
+    convertImage(*imageOut, imageOutLabel);*/
+
+}
+
+void Controler::applyFilterMedian(int n){
+    Filter filtro;
+    /*Image img;
+    img.setHeight(imageOut->getHeight());
+    img.setWidth(imageOut->getWidth());
+    img.setLevel(imageOut->getLevel());
+    img.setType(imageOut->getType());
+    img.setBlue(imageOut->getBlue());
+    img.setRed(imageOut->getRed());
+    img.setGreen(imageOut->getGreen());
+    img.setGraysScale(imageOut->getGraysScale());*/
+
+    Image tempImageOut = filtro.medianFilter(*imageOut, n), *temp;
+    tempImageOut.saveImage(QDir::currentPath().append("/file.pgm").toStdString());
+    this->imageOutLabel.load(QDir::currentPath().append("/file.pgm"));
+    temp = new Image(QDir::currentPath().append("/file.pgm").toStdString());
+    this->imageOut = temp;
+    cout << QDir::currentPath().append("/file.pgm").toStdString()<<endl;
+   // convertImage(*imageOut, imageOutLabel);
+}
+
+QImage Controler::getHistogram(){
+    Histogram h(*this->imageOut);
+    Image imgH = h.getImageHistogram();
+
+    imgH.saveImage(QDir::currentPath().toStdString().append("/file.pgm"));
+    QImage imgcopy;
+    imgcopy.load(QDir::currentPath().append("/file.pgm"));
+
+    //cout <<  QDir::currentPath().append("/file.pgm").toStdString()<<endl << endl;
+    return imgcopy;
+}
