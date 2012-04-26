@@ -1,37 +1,3 @@
-/*
-#include "dcmtk/config/osconfig.h"
-#include "dcmtk/dcmdata/dctk.h"
-#include "dcmtk/dcmdata/dcpxitem.h"
-
-
-int main(int argc, char *argv[])
-{
-  OFCondition result = EC_Normal;
-
-  DcmFileFormat dfile;
-  result = dfile.loadFile("test.dcm");
-  if (result.bad())
-    return 1;
-  DcmDataset *data = dfile.getDataset();
-  if (data == NULL)
-    return 1;
-  DcmElement* element = NULL;
-  result = data->findAndGetElement(DCM_PixelData, element);
-  if (result.bad() || element == NULL)
-    return 1;
-  DcmPixelData *dpix = NULL;
-
-
-
-  if (result.bad())
-    return 1;
-  else
-    return 0;
-}
-*/
-
-
-
 #include "image.h"
 #include "histogram.h"
 #include "thresholding.h"
@@ -41,7 +7,9 @@ int main(int argc, char *argv[])
 
 int main(int argc, char *argv[])
 {
-    //Image image("Images Test/lena.pgm");
+     Image imagen;
+     //imagen.readDicomImage("../ImagenesPrueba/DCMTKSamples/brain.dcm");
+    //image.saveImage("../ImagenesPrueba/guardeP6.ppm");
 
     try{
         //Image image("../ImagenesPrueba/lena256.ppm");
@@ -100,6 +68,6 @@ int main(int argc, char *argv[])
     }catch(...){
         cerr << "Desconocido";
     }
-        return 0;
+    return 0;
 }
 
