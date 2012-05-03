@@ -5,6 +5,7 @@
 #include <QFileDialog>
 #include <QDesktopWidget>
 #include <QPainter>
+#include <QMessageBox>
 #include "controler.h"
 
 
@@ -45,6 +46,8 @@ private:
     QAction* createActionFilterSigma();
     QAction* createActionFilterMedian();
     QAction* createActionHistogram();
+    QAction* createActionAbout();
+
 
 
 
@@ -55,6 +58,7 @@ private slots:
     void applyFilterSigma();
     void applyFilterMedian();
     void getHistogram();
+    void showAbout();
 
 };
 

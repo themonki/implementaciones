@@ -17,6 +17,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->menubar->addMenu(this->fileMenu);
     ui->menubar->addMenu(this->filterMenu);
     ui->menubar->addMenu(this->HistogramMenu);
+    ui->menubar->addMenu(this->helpMenu);
 
     setWindowTitle(tr("Image Processing"));
 
@@ -107,6 +108,17 @@ QAction* MainWindow::createActionHistogram()
      return act;
 }
 
+QAction* MainWindow::createActionAbout()
+ {
+     QAction *act;
+     act = new QAction(tr("&Acerca de.."), this);
+     //act->setShortcuts(QKeySequence::SaveAs);
+     connect(act, SIGNAL(triggered()), this, SLOT(showAbout()));
+     act->setStatusTip(tr("Acerca de la aplicación y sus creadores"));
+     //this->menuAboutOf = act;
+     return act;
+}
+
 void MainWindow::createMenus(){
 
     this->fileMenu = new QMenu(tr("&Archivo"));
@@ -118,9 +130,17 @@ void MainWindow::createMenus(){
     this->filterMenu = new QMenu(tr("&Filtro"));
     filterMenu->addAction(createActionFilterMedian());
     filterMenu->addAction(createActionFilterSigma());
+    menuApplyFilterSigma->setEnabled(false);
+    menuApplyFilterMedian->setEnabled(false);
+
+
 
     this->HistogramMenu = new QMenu(tr("&Histogram"));
     HistogramMenu->addAction(createActionHistogram());
+    menuHistogramGet->setEnabled(false);
+
+    this->helpMenu = new QMenu(tr("&Ayuda"));
+    helpMenu->addAction(createActionAbout());
 
 
 
@@ -137,6 +157,17 @@ void MainWindow::openFile(){
     this->path=temp;
     this->controler.openImage(path);
     this->menuSaveFile->setEnabled(true);
+    if(!controler.isppmImage()){
+        this->menuHistogramGet->setEnabled(true);
+
+        this->menuApplyFilterMedian->setEnabled(true);
+        this->menuApplyFilterSigma->setEnabled(true);
+    }else{
+        this->menuApplyFilterMedian->setEnabled(false);
+        this->menuApplyFilterSigma->setEnabled(false);
+        this->menuHistogramGet->setEnabled(false);
+    }
+
 
 
     ui->labelImageIn->setPixmap(QPixmap::fromImage(controler.getImageIn()));
@@ -196,4 +227,13 @@ void MainWindow::getHistogram(){
     ui->labelHistogram->setStatusTip("Histograma calculado");
     ui->labelHistogram->setScaledContents(true);
     ui->labelHistogram->update();
+}
+
+void MainWindow::showAbout(){
+    QMessageBox dialog(this);
+    dialog.setText("Aplicación para el manejo e implementacion de algoritmos para el procesamiento de imagenes.\n Integrantes:\n\tEdgar Andres Moncada\n\tYerminson Gonzalez");
+    dialog.exec();
+
+
+
 }
