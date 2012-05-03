@@ -3,12 +3,15 @@
 
 #include <iostream>
 #include <exception>
-#include <string.h>
+#include <string>
+#include <sstream>
 
 using namespace std;
 
 static const int VALOR_FUERA_RANGO_NIVEL=100;
 static const int EXTENSION_DESCONOCIDA=200;
+static const int CONTENIDO_IMAGEN_DESCONOCIDO=201;
+static const int ARCHIVO_NO_EXISTE=202;
 
 class ImageExeption: public exception{
 public:
@@ -18,6 +21,7 @@ public:
     int getMotive();
     const char* getDescription();
     const char* appendValue(const char* , const char* );
+    string getMessage();
 private:
     int motive;
     const char* description;

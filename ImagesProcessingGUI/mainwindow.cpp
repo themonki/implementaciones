@@ -7,16 +7,12 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-
-
-
-
-
     this->path = QDir::homePath();
     this->createMenus();
     ui->menubar->addMenu(this->fileMenu);
     ui->menubar->addMenu(this->filterMenu);
-    ui->menubar->addMenu(this->HistogramMenu);
+    ui->menubar->addMenu(this->histogramMenu);
+    ui->menubar->addMenu(this->contrastMenu);
     ui->menubar->addMenu(this->helpMenu);
 
     setWindowTitle(tr("Image Processing"));
@@ -75,6 +71,16 @@ QAction* MainWindow::createActionSaveFile()
      return act;
 }
 
+QAction* MainWindow::createActionCloseFile()
+ {
+     QAction *act;
+     act = new QAction(tr("&Cerrar"), this);
+     //act->setShortcuts(QKeySequence::Close);
+     connect(act, SIGNAL(triggered()), this, SLOT(closeFile()));
+     this->menuCloseFile = act;
+     return act;
+}
+
 QAction* MainWindow::createActionFilterSigma()
  {
      QAction *act;
@@ -101,10 +107,49 @@ QAction* MainWindow::createActionHistogram()
  {
      QAction *act;
      act = new QAction(tr("&Obtener Histograma"), this);
-     //act->setShortcuts(QKeySequence::SaveAs);
      connect(act, SIGNAL(triggered()), this, SLOT(getHistogram()));
      act->setStatusTip(tr("Calcula el histograma de la imagen en escala de grises"));
      this->menuHistogramGet = act;
+     return act;
+}
+
+QAction* MainWindow::createActionContrastGammaCorrection()
+ {
+     QAction *act;
+     act = new QAction(tr("Aplicar Corrección &Gamma"), this);
+     connect(act, SIGNAL(triggered()), this, SLOT(applyContrastGammaCorrection()));
+     act->setStatusTip(tr("Aplica la corrección Gamma sobre la imagen"));
+     this->menuApplyContrastGammaCorrection = act;
+     return act;
+}
+
+QAction* MainWindow::createActionContrastExpansion()
+ {
+     QAction *act;
+     act = new QAction(tr("Aplicar E&xpansion"), this);
+     connect(act, SIGNAL(triggered()), this, SLOT(applyContrastExpansion()));
+     act->setStatusTip(tr("Aplica el contraste Expansion sobre la imagen"));
+     this->menuApplyContrastExpansion = act;
+     return act;
+}
+
+QAction* MainWindow::createActionContrastImprove()
+ {
+     QAction *act;
+     act = new QAction(tr("Aplicar &Improve"), this);
+     connect(act, SIGNAL(triggered()), this, SLOT(applyContrastImprove()));
+     act->setStatusTip(tr("Aplica el contraste Improve sobre la imagen"));
+     this->menuApplyContrastImprove = act;
+     return act;
+}
+
+QAction* MainWindow::createActionEqualizer()
+ {
+     QAction *act;
+     act = new QAction(tr("&Equalizar"), this);
+     connect(act, SIGNAL(triggered()), this, SLOT(applyEqualizer()));
+     act->setStatusTip(tr("Equaliza la imagen"));
+     this->menuApplyEqualizer = act;
      return act;
 }
 
@@ -114,7 +159,7 @@ QAction* MainWindow::createActionAbout()
      act = new QAction(tr("&Acerca de.."), this);
      //act->setShortcuts(QKeySequence::SaveAs);
      connect(act, SIGNAL(triggered()), this, SLOT(showAbout()));
-     act->setStatusTip(tr("Acerca de la aplicación y sus creadores"));
+     act->setStatusTip(QObject::trUtf8("Acerca de la aplicación y sus creadores"));
      //this->menuAboutOf = act;
      return act;
 }
@@ -122,25 +167,40 @@ QAction* MainWindow::createActionAbout()
 void MainWindow::createMenus(){
 
     this->fileMenu = new QMenu(tr("&Archivo"));
-    fileMenu->addAction(createActionOpenFile());
-    fileMenu->addAction(createActionSaveFile());
-    menuSaveFile->setEnabled(false);
+    this->fileMenu->addAction(createActionOpenFile());
+    this->fileMenu->addAction(createActionSaveFile());
+    this->fileMenu->addAction(createActionCloseFile());
+    this->menuSaveFile->setEnabled(false);
+    this->menuCloseFile->setEnabled(false);
+
 
 
     this->filterMenu = new QMenu(tr("&Filtro"));
-    filterMenu->addAction(createActionFilterMedian());
-    filterMenu->addAction(createActionFilterSigma());
-    menuApplyFilterSigma->setEnabled(false);
-    menuApplyFilterMedian->setEnabled(false);
+    this->filterMenu->addAction(createActionFilterMedian());
+    this->filterMenu->addAction(createActionFilterSigma());
+    this->menuApplyFilterSigma->setEnabled(false);
+    this->menuApplyFilterMedian->setEnabled(false);
 
 
 
-    this->HistogramMenu = new QMenu(tr("&Histogram"));
-    HistogramMenu->addAction(createActionHistogram());
-    menuHistogramGet->setEnabled(false);
+    this->histogramMenu = new QMenu(tr("&Histogram"));
+    this->histogramMenu->addAction(createActionHistogram());
+    this->menuHistogramGet->setEnabled(false);
+
+    this->contrastMenu = new QMenu(tr("&Contraste"));
+    this->contrastMenu->addAction(createActionContrastGammaCorrection());
+    this->contrastMenu->addAction(createActionContrastExpansion());
+    this->contrastMenu->addAction(createActionContrastImprove());
+    this->contrastMenu->addAction(createActionEqualizer());
+    this->menuApplyContrastExpansion->setEnabled(false);
+    this->menuApplyContrastGammaCorrection->setEnabled(false);
+    this->menuApplyContrastImprove->setEnabled(false);
+    this->menuApplyEqualizer->setEnabled(false);
+
+
 
     this->helpMenu = new QMenu(tr("&Ayuda"));
-    helpMenu->addAction(createActionAbout());
+    this->helpMenu->addAction(createActionAbout());
 
 
 
@@ -154,25 +214,46 @@ void MainWindow::openFile(){
     if(temp.isNull()){
         return;
     }
+    if(!this->controler.getImageInLabel().isNull()){
+        this->controler.clearAll();
+    }
     this->path=temp;
-    this->controler.openImage(path);
+    try{
+        this->controler.openImage(path);
+
+    }catch(ImageExeption& e){
+
+        QMessageBox dialog(this);
+        dialog.setText(QString(e.getMessage().c_str()));
+        dialog.exec();
+        return;
+    }
+    this->menuCloseFile->setEnabled(true);
     this->menuSaveFile->setEnabled(true);
     if(!controler.isppmImage()){
         this->menuHistogramGet->setEnabled(true);
-
         this->menuApplyFilterMedian->setEnabled(true);
         this->menuApplyFilterSigma->setEnabled(true);
+        this->menuApplyContrastExpansion->setEnabled(true);
+        this->menuApplyContrastGammaCorrection->setEnabled(true);
+        this->menuApplyContrastImprove->setEnabled(true);
+        this->menuApplyEqualizer->setEnabled(true);
+
     }else{
         this->menuApplyFilterMedian->setEnabled(false);
         this->menuApplyFilterSigma->setEnabled(false);
         this->menuHistogramGet->setEnabled(false);
+        this->menuApplyContrastExpansion->setEnabled(false);
+        this->menuApplyContrastGammaCorrection->setEnabled(false);
+        this->menuApplyContrastImprove->setEnabled(false);
+        this->menuApplyEqualizer->setEnabled(false);
     }
 
 
 
-    ui->labelImageIn->setPixmap(QPixmap::fromImage(controler.getImageIn()));
+    ui->labelImageIn->setPixmap(QPixmap::fromImage(controler.getImageInLabel()));
     ui->labelImageIn->setScaledContents(true);
-    ui->labelImageOut->setPixmap(QPixmap::fromImage(controler.getImageIn()));
+    ui->labelImageOut->setPixmap(QPixmap::fromImage(controler.getImageInLabel()));
     ui->labelImageOut->setScaledContents(true);
 
     ui->labelHistogram->setPixmap(QPixmap::fromImage(QImage()));
@@ -190,7 +271,7 @@ void MainWindow::saveFile(){
         if(temp.isNull()){
             return;
         }
-        this->controler.saveImage(temp, controler.getImageOut());
+        this->controler.saveImage(temp, controler.getImageOutLabel());
         this->menuSaveFile->setStatusTip(tr("El archivo se ha guardado correctamente"));
 
         return;
@@ -200,25 +281,93 @@ void MainWindow::saveFile(){
     if(temp.isNull()){
         return;
     }
-    this->controler.saveImage(temp, controler.getImageOut());
+    this->controler.saveImage(temp, controler.getImageOutLabel());
     this->menuSaveFile->setStatusTip(tr("El archivo se ha guardado correctamente"));
 }
 
+void MainWindow::closeFile(){
+
+    this->controler.clearAll();
+    ui->labelImageIn->setPixmap(QPixmap::fromImage(QImage()));
+    ui->labelImageOut->setPixmap(QPixmap::fromImage(QImage()));
+    ui->labelHistogram->setPixmap(QPixmap::fromImage(QImage()));
+
+    this->menuCloseFile->setEnabled(false);
+    this->menuSaveFile->setEnabled(false);
+    this->menuApplyFilterMedian->setEnabled(false);
+    this->menuApplyFilterSigma->setEnabled(false);
+    this->menuApplyFilterMedian->setEnabled(false);
+    this->menuApplyFilterSigma->setEnabled(false);
+    this->menuHistogramGet->setEnabled(false);
+    this->menuApplyContrastExpansion->setEnabled(false);
+    this->menuApplyContrastGammaCorrection->setEnabled(false);
+    this->menuApplyContrastImprove->setEnabled(false);
+    this->menuApplyEqualizer->setEnabled(false);
+
+
+}
+
 void MainWindow::applyFilterMedian(){
-    this->controler.applyFilterMedian(3);
-    ui->labelImageOut->setPixmap(QPixmap::fromImage(controler.getImageOut()));
+    bool ok;
+    int value = QInputDialog::getInt(this, tr("Valor de calculo"),
+                                     tr("Ingrese n:"), 3,0,100,1,&ok);
+    this->controler.applyFilterMedian(value);
+    ui->labelImageOut->setPixmap(QPixmap::fromImage(controler.getImageOutLabel()));
     ui->labelImageOut->setStatusTip("Filtro Mediana Aplicado");
     ui->labelImageOut->setScaledContents(true);
     ui->labelImageOut->update();
 }
 
 void MainWindow::applyFilterSigma(){
-    this->controler.applyFilterSigma(10);
-    ui->labelImageOut->setPixmap(QPixmap::fromImage(controler.getImageOut()));
+    bool ok;
+    int value = QInputDialog::getInt(this, tr("Valor de calculo"),
+                                     tr("Ingrese sigma:"), 10,0,100,1,&ok);
+    this->controler.applyFilterSigma(value);
+    ui->labelImageOut->setPixmap(QPixmap::fromImage(controler.getImageOutLabel()));
     ui->labelImageOut->setStatusTip("Filtro Sigma Aplicado");
     ui->labelImageOut->setScaledContents(true);
     ui->labelImageOut->update();
 
+}
+
+void MainWindow::applyContrastGammaCorrection(){
+    bool ok;
+    double value = QInputDialog::getDouble(this, tr("Valor de calculo"),
+                                     tr("Ingrese r:"), 2.2,0,100,2,&ok);
+    this->controler.applyContrastCorrectionGamma(value);
+    ui->labelImageOut->setPixmap(QPixmap::fromImage(controler.getImageOutLabel()));
+    ui->labelImageOut->setStatusTip(QObject::trUtf8("Corrección Gamma Aplicado"));
+    ui->labelImageOut->setScaledContents(true);
+    ui->labelImageOut->update();
+}
+
+void MainWindow::applyContrastExpansion(){
+    this->controler.applyContrastExpansion();
+    ui->labelImageOut->setPixmap(QPixmap::fromImage(controler.getImageOutLabel()));
+    ui->labelImageOut->setStatusTip(QObject::trUtf8("Contraste Expansion Aplicado"));
+    ui->labelImageOut->setScaledContents(true);
+    ui->labelImageOut->update();
+}
+
+void MainWindow::applyContrastImprove(){
+    bool ok;
+    int value = QInputDialog::getInt(this, tr("Valor de calculo"),
+                                     tr("Ingrese option:"), 1,0,100,1,&ok);
+    cout << value << endl;
+
+    this->controler.applyContrastImprove(value);
+    ui->labelImageOut->setPixmap(QPixmap::fromImage(controler.getImageOutLabel()));
+    ui->labelImageOut->setStatusTip(QObject::trUtf8("Contraste Improve Aplicado"));
+    ui->labelImageOut->setScaledContents(true);
+    ui->labelImageOut->update();
+}
+
+void MainWindow::applyEqualizer(){
+    this->controler.applyEqualizer();
+    ui->labelImageOut->setPixmap(QPixmap::fromImage(controler.getImageOutLabel()));
+    ui->labelImageOut->setStatusTip(QObject::trUtf8("Equalizador Aplicado"));
+    ui->labelImageOut->setScaledContents(true);
+    ui->labelImageOut->update();
 }
 
 void MainWindow::getHistogram(){
@@ -231,9 +380,6 @@ void MainWindow::getHistogram(){
 
 void MainWindow::showAbout(){
     QMessageBox dialog(this);
-    dialog.setText("Aplicación para el manejo e implementacion de algoritmos para el procesamiento de imagenes.\n Integrantes:\n\tEdgar Andres Moncada\n\tYerminson Gonzalez");
+    dialog.setText(QObject::trUtf8("Aplicación para el manejo e implementacion de algoritmos para el procesamiento de imagenes.\n Integrantes:\n\tEdgar Andres Moncada\n\tYerminson Gonzalez"));
     dialog.exec();
-
-
-
 }

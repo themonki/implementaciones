@@ -530,10 +530,8 @@ void Image::readDicomImage(string path)
         cerr << "Error: cannot read DICOM file (" << status.text() << ")" << endl;
 
 
-
-
-
     DicomImage *image = new DicomImage(path.c_str());
+    image->getStatus();
 
     width = image->getWidth();
     height = image->getHeight();

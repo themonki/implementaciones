@@ -16,14 +16,18 @@ SOURCES += main.cpp\
     controler.cpp \
     imageexeption.cpp \
     filter.cpp \
-    histogram.cpp
+    histogram.cpp \
+    thresholding.cpp \
+    contrast.cpp
 
 HEADERS  += mainwindow.h \
     image.h \
     controler.h \
     imageexeption.h \
     filter.h \
-    histogram.h
+    histogram.h \
+    thresholding.h \
+    contrast.h
 
 FORMS    += mainwindow.ui
 

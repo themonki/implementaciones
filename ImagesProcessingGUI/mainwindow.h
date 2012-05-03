@@ -6,6 +6,7 @@
 #include <QDesktopWidget>
 #include <QPainter>
 #include <QMessageBox>
+#include <QInputDialog>
 #include "controler.h"
 
 
@@ -29,22 +30,33 @@ private:
     QString path;
     QAction *menuOpenFile;
     QAction *menuSaveFile;
+    QAction *menuCloseFile;
     QAction *menuApplyFilterSigma;
     QAction *menuApplyFilterMedian;
+    QAction *menuApplyContrastGammaCorrection;
+    QAction *menuApplyContrastExpansion;
+    QAction *menuApplyContrastImprove;
+    QAction *menuApplyEqualizer;
     QAction *menuHistogramGet;
 
 
     Ui::MainWindow *ui;
     QMenu *fileMenu;
     QMenu *filterMenu;
-    QMenu *HistogramMenu;
+    QMenu *histogramMenu;
+    QMenu *contrastMenu;
     QMenu *helpMenu;
 
     void createMenus();
     QAction* createActionOpenFile();
     QAction* createActionSaveFile();
+    QAction* createActionCloseFile();
     QAction* createActionFilterSigma();
     QAction* createActionFilterMedian();
+    QAction* createActionContrastGammaCorrection();
+    QAction* createActionContrastExpansion();
+    QAction* createActionContrastImprove();
+    QAction* createActionEqualizer();
     QAction* createActionHistogram();
     QAction* createActionAbout();
 
@@ -55,8 +67,13 @@ private slots:
 
     void openFile();
     void saveFile();
+    void closeFile();
     void applyFilterSigma();
     void applyFilterMedian();
+    void applyContrastGammaCorrection();
+    void applyContrastExpansion();
+    void applyContrastImprove();
+    void applyEqualizer();
     void getHistogram();
     void showAbout();
 

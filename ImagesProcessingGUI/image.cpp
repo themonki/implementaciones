@@ -24,7 +24,9 @@ void Image::readImage()
     int count=0;
 
     if(!imageIn.is_open()){
-        cerr << "Error: ¡La imagen no existe o no pudo ser cargada!" << endl;
+        const char* s= "OpenFile-readImage";
+        throw ImageExeption(ARCHIVO_NO_EXISTE,s );
+        //cerr << "Error: ¡La imagen no existe o no pudo ser cargada!" << endl;
         abort();
     }
 
@@ -34,7 +36,9 @@ void Image::readImage()
         if(content.substr(0, 1).compare("#")){ //Si la linea no es un comentario se guardan los datos
             if(count==0){
                 if(content.compare("P2") && content.compare("P3") && content.compare("P5") && content.compare("P6")){
-                    cerr << "Error: ¡La imagen no es de tipo PGM " << content << endl;
+                    const char* s= "FormatPPM&PGM-readImage";
+                    throw ImageExeption(CONTENIDO_IMAGEN_DESCONOCIDO,s );
+                    //cerr << "Error: ¡La imagen no es de tipo Valida " << content << endl;
                     return;
                 }
                 else{
@@ -76,7 +80,7 @@ void Image::readImage()
                     }else{
                         //cerr << "Valor fuera del rango de nivel";
                         const char* s= "GrayValue-readImage";
-                        throw(ImageExeption(VALOR_FUERA_RANGO_NIVEL,s ));
+                        throw ImageExeption(VALOR_FUERA_RANGO_NIVEL,s );
                     }
                 }else{
                     getline(imageIn, content);
@@ -116,7 +120,7 @@ void Image::readImage()
                         red[i][j] = value;
                     }else{
                         const char* s= "RedValue-readImage";
-                        throw(ImageExeption(VALOR_FUERA_RANGO_NIVEL), s);
+                        throw ImageExeption(VALOR_FUERA_RANGO_NIVEL, s);
                     }
 
                     imageIn >> content; //G
@@ -125,7 +129,7 @@ void Image::readImage()
                         green[i][j] = value;
                     }else{
                         const char* s= "GreenValue-readImage";
-                        throw(ImageExeption(VALOR_FUERA_RANGO_NIVEL, s));
+                        throw ImageExeption(VALOR_FUERA_RANGO_NIVEL, s);
                     }
 
                     imageIn >> content; //B
@@ -134,7 +138,7 @@ void Image::readImage()
                         blue[i][j] = value;
                     }else{
                         const char* s= "BlueValue-readImage";
-                        throw(ImageExeption(VALOR_FUERA_RANGO_NIVEL), s);
+                        throw ImageExeption(VALOR_FUERA_RANGO_NIVEL, s);
                     }
 
                 }else{
@@ -483,12 +487,16 @@ void Image::saveImage(string path){
 
 void Image::clearImage(){
     //para limpiar todos los vectores y datos
-    for(int i = 0; i < height; i++){
-        this->blue[i].clear();
-        this->red[i].clear();
-        this->green[i].clear();
-        this->graysScale[i].clear();
-
+    if(this->graysScale.size()>0){
+        for(int i = 0; i < height; i++){
+            this->graysScale[i].clear();
+        }
+    }else{
+        for(int i = 0; i < height; i++){
+            this->blue[i].clear();
+            this->red[i].clear();
+            this->green[i].clear();
+        }
     }
 
     this->blue.clear();
@@ -500,7 +508,7 @@ void Image::clearImage(){
     this->height=0;
     this->type.clear();
     this->level=0;
-    this->path.clear();
+    this->path.clear();    
 }
 
 int Image::round(double number){
@@ -515,7 +523,7 @@ bool Image::isRangeLevel(int number){
 void Image::readDicomImage(string path)
 {
 
-
+/*
     DcmFileFormat fileformat;
     OFCondition status = fileformat.loadFile(path.c_str());
     if (status.good())
@@ -523,27 +531,28 @@ void Image::readDicomImage(string path)
         OFString patientName;
         if (fileformat.getDataset()->findAndGetOFString(DCM_PatientName, patientName).good())
         {
-            cout << "Patient's Name: " << patientName << endl;
+            cout << "1Patient's Name: " << patientName << endl;
         } else
             cerr << "Error: cannot access Patient's Name!" << endl;
     } else
         cerr << "Error: cannot read DICOM file (" << status.text() << ")" << endl;
 
-
-
-
-
+*/
     DicomImage *image = new DicomImage(path.c_str());
+    if (image->getStatus() != EIS_Normal){
+        DicomImage::getString(image->getStatus());
+        return;
+
+    }
+
+    cerr << "cargo imagen " << "" << endl;
 
     width = image->getWidth();
     height = image->getHeight();
     level = 255;
     type = "P2";
 
-
     this->graysScale.resize(this->height);
-
-
 
     if (image != NULL)
     {

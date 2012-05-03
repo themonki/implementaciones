@@ -12,8 +12,8 @@ void Controler::openImage(QString path){
     if(!path.toStdString().substr(path.toStdString().length()-4, 4).compare(".dcm")){
         this->dicomImage=true;
         this->ppmImage=true;
-        this->imageOut->readDicomImage(path.toStdString());
         this->imageIn->readDicomImage(path.toStdString());
+        this->imageOut->readDicomImage(path.toStdString());
         return;
     }
 
@@ -99,20 +99,39 @@ void Controler::saveImage(QString path, QImage img){
     this->imageOut->saveImage(path.toStdString());
 }
 
-void Controler::setImageIn(QImage i){
-
+void Controler::setImageIn(Image* i){
+    this->imageIn=i;
 }
 
-void Controler::setImageOut(QImage i){
-
+void Controler::setImageOut(Image* i){
+    this->imageIn=i;
 }
 
-QImage Controler::getImageIn(){
+void Controler::setImageInLabel(QImage i){
+    this->imageInLabel=i;
+}
+
+void Controler::setImageOutLabel(QImage i){
+    this->imageOutLabel=i;
+}
+
+
+
+Image* Controler::getImageIn(){
+
+    return this->imageIn;
+}
+
+Image* Controler::getImageOut(){
+    return this->imageOut;
+}
+
+QImage Controler::getImageInLabel(){
 
     return this->imageInLabel;
 }
 
-QImage Controler::getImageOut(){
+QImage Controler::getImageOutLabel(){
     return this->imageOutLabel;
 }
 
@@ -198,7 +217,7 @@ void Controler::applyFilterMedian(int n){
     this->imageOutLabel.load(QDir::currentPath().append("/file.pgm"));
     temp = new Image(QDir::currentPath().append("/file.pgm").toStdString());
     this->imageOut = temp;
-    cout << QDir::currentPath().append("/file.pgm").toStdString()<<endl;
+    //cout << QDir::currentPath().append("/file.pgm").toStdString()<<endl;
    // convertImage(*imageOut, imageOutLabel);
 }
 
@@ -214,5 +233,50 @@ QImage Controler::getHistogram(){
     return imgcopy;
 }
 
+void Controler::applyContrastExpansion(){
+    Contrast c;
+    Image img= c.contrastExpansion(*this->imageOut), *temp;
+    img.saveImage(QDir::currentPath().toStdString().append("/file.pgm"));
+    this->imageOutLabel.load(QDir::currentPath().append("/file.pgm"));
+    temp = new Image(QDir::currentPath().append("/file.pgm").toStdString());
+    this->imageOut = temp;
+}
+
+void Controler::applyContrastCorrectionGamma(double r){
+    Contrast c;
+    Image img = c.gammaCorrection(*this->imageOut, r), *temp;
+    img.saveImage(QDir::currentPath().toStdString().append("/file.pgm"));
+    this->imageOutLabel.load(QDir::currentPath().append("/file.pgm"));
+    temp = new Image(QDir::currentPath().append("/file.pgm").toStdString());
+    this->imageOut = temp;
+}
+
+void Controler::applyContrastImprove(int option){
+    Contrast c;
+    Image img = c.improveContrast(*this->imageOut, option), *temp;
+    img.saveImage(QDir::currentPath().toStdString().append("/file.pgm"));
+    this->imageOutLabel.load(QDir::currentPath().append("/file.pgm"));
+    temp = new Image(QDir::currentPath().append("/file.pgm").toStdString());
+    this->imageOut = temp;
+}
+
+void Controler::applyEqualizer(){
+    Contrast c;
+    Image img = c.applyEqulizer(*this->imageOut), *temp;
+    img.saveImage(QDir::currentPath().toStdString().append("/file.pgm"));
+    this->imageOutLabel.load(QDir::currentPath().append("/file.pgm"));
+    temp = new Image(QDir::currentPath().append("/file.pgm").toStdString());
+    this->imageOut = temp;
+}
+
+
 bool Controler::isDicomImage(){return dicomImage;}
+
 bool Controler::isppmImage(){return ppmImage;}
+
+void Controler::clearAll(){
+    this->imageIn->clearImage();
+    this->imageOut->clearImage();
+    this->dicomImage=false;
+    this->ppmImage=false;
+}
