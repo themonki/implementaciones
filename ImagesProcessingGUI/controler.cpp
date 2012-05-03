@@ -269,6 +269,33 @@ void Controler::applyEqualizer(){
     this->imageOut = temp;
 }
 
+void Controler::getThresholdingDosPicos(){
+    Thresholding t;
+    Image img = t.applyDosPicos(*this->imageOut), *temp;
+    img.saveImage(QDir::currentPath().toStdString().append("/file.pgm"));
+    this->imageOutLabel.load(QDir::currentPath().append("/file.pgm"));
+    temp = new Image(QDir::currentPath().append("/file.pgm").toStdString());
+    this->imageOut = temp;
+}
+
+void Controler::getThresholdingIsodata(){
+    Thresholding t;
+    Image img = t.applyIsodata(*this->imageOut), *temp;
+    img.saveImage(QDir::currentPath().toStdString().append("/file.pgm"));
+    this->imageOutLabel.load(QDir::currentPath().append("/file.pgm"));
+    temp = new Image(QDir::currentPath().append("/file.pgm").toStdString());
+    this->imageOut = temp;
+}
+
+void Controler::getThresholdingOtsu(){
+    Thresholding t;
+    Image img = t.applyOtsu(*this->imageOut), *temp;
+    img.saveImage(QDir::currentPath().toStdString().append("/file.pgm"));
+    this->imageOutLabel.load(QDir::currentPath().append("/file.pgm"));
+    temp = new Image(QDir::currentPath().append("/file.pgm").toStdString());
+    this->imageOut = temp;
+}
+
 
 bool Controler::isDicomImage(){return dicomImage;}
 

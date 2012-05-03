@@ -37,6 +37,9 @@ private:
     QAction *menuApplyContrastExpansion;
     QAction *menuApplyContrastImprove;
     QAction *menuApplyEqualizer;
+    QAction *menuThresholdingDosPicosGet;
+    QAction *menuThresholdingIsodataGet;
+    QAction *menuThresholdingOtsuGet;
     QAction *menuHistogramGet;
 
 
@@ -58,6 +61,9 @@ private:
     QAction* createActionContrastImprove();
     QAction* createActionEqualizer();
     QAction* createActionHistogram();
+    QAction* createActionThresholdingDosPicos();
+    QAction* createActionThresholdingIsodata();
+    QAction* createActionThresholdingOtsu();
     QAction* createActionAbout();
 
 
@@ -75,6 +81,9 @@ private slots:
     void applyContrastImprove();
     void applyEqualizer();
     void getHistogram();
+    void getThresholdingDosPicos();
+    void getThresholdingIsodata();
+    void getThresholdingOtsu();
     void showAbout();
 
 };

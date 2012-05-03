@@ -43,6 +43,9 @@ public:
     void applyContrastImprove(int option);
     void applyEqualizer();
     QImage getHistogram();
+    void getThresholdingDosPicos();
+    void getThresholdingOtsu();
+    void getThresholdingIsodata();
     bool isDicomImage();
     bool isppmImage();
     void clearAll();

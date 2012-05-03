@@ -153,6 +153,36 @@ QAction* MainWindow::createActionEqualizer()
      return act;
 }
 
+QAction* MainWindow::createActionThresholdingDosPicos()
+ {
+     QAction *act;
+     act = new QAction(tr("&Dos Picos"), this);
+     connect(act, SIGNAL(triggered()), this, SLOT(getThresholdingDosPicos()));
+     act->setStatusTip(tr(""));
+     this->menuThresholdingDosPicosGet = act;
+     return act;
+}
+
+QAction* MainWindow::createActionThresholdingOtsu()
+ {
+     QAction *act;
+     act = new QAction(tr("&Otsu"), this);
+     connect(act, SIGNAL(triggered()), this, SLOT(getThresholdingOtsu()));
+     act->setStatusTip(tr(""));
+     this->menuThresholdingOtsuGet = act;
+     return act;
+}
+
+QAction* MainWindow::createActionThresholdingIsodata()
+ {
+     QAction *act;
+     act = new QAction(tr("&Isodata"), this);
+     connect(act, SIGNAL(triggered()), this, SLOT(getThresholdingIsodata()));
+     act->setStatusTip(tr(""));
+     this->menuThresholdingIsodataGet = act;
+     return act;
+}
+
 QAction* MainWindow::createActionAbout()
  {
      QAction *act;
@@ -185,7 +215,13 @@ void MainWindow::createMenus(){
 
     this->histogramMenu = new QMenu(tr("&Histogram"));
     this->histogramMenu->addAction(createActionHistogram());
+    this->histogramMenu->addAction(createActionThresholdingDosPicos());
+    this->histogramMenu->addAction(createActionThresholdingIsodata());
+    this->histogramMenu->addAction(createActionThresholdingOtsu());
     this->menuHistogramGet->setEnabled(false);
+    this->menuThresholdingIsodataGet->setEnabled(false);
+    this->menuThresholdingDosPicosGet->setEnabled(false);
+    this->menuThresholdingOtsuGet->setEnabled(false);
 
     this->contrastMenu = new QMenu(tr("&Contraste"));
     this->contrastMenu->addAction(createActionContrastGammaCorrection());
@@ -238,6 +274,9 @@ void MainWindow::openFile(){
         this->menuApplyContrastGammaCorrection->setEnabled(true);
         this->menuApplyContrastImprove->setEnabled(true);
         this->menuApplyEqualizer->setEnabled(true);
+        this->menuThresholdingIsodataGet->setEnabled(true);
+        this->menuThresholdingDosPicosGet->setEnabled(true);
+        this->menuThresholdingOtsuGet->setEnabled(true);
 
     }else{
         this->menuApplyFilterMedian->setEnabled(false);
@@ -247,6 +286,9 @@ void MainWindow::openFile(){
         this->menuApplyContrastGammaCorrection->setEnabled(false);
         this->menuApplyContrastImprove->setEnabled(false);
         this->menuApplyEqualizer->setEnabled(false);
+        this->menuThresholdingIsodataGet->setEnabled(false);
+        this->menuThresholdingDosPicosGet->setEnabled(false);
+        this->menuThresholdingOtsuGet->setEnabled(false);
     }
 
 
@@ -303,6 +345,9 @@ void MainWindow::closeFile(){
     this->menuApplyContrastGammaCorrection->setEnabled(false);
     this->menuApplyContrastImprove->setEnabled(false);
     this->menuApplyEqualizer->setEnabled(false);
+    this->menuThresholdingIsodataGet->setEnabled(false);
+    this->menuThresholdingDosPicosGet->setEnabled(false);
+    this->menuThresholdingOtsuGet->setEnabled(false);
 
 
 }
@@ -353,8 +398,6 @@ void MainWindow::applyContrastImprove(){
     bool ok;
     int value = QInputDialog::getInt(this, tr("Valor de calculo"),
                                      tr("Ingrese option:"), 1,0,100,1,&ok);
-    cout << value << endl;
-
     this->controler.applyContrastImprove(value);
     ui->labelImageOut->setPixmap(QPixmap::fromImage(controler.getImageOutLabel()));
     ui->labelImageOut->setStatusTip(QObject::trUtf8("Contraste Improve Aplicado"));
@@ -376,6 +419,30 @@ void MainWindow::getHistogram(){
     ui->labelHistogram->setStatusTip("Histograma calculado");
     ui->labelHistogram->setScaledContents(true);
     ui->labelHistogram->update();
+}
+
+void MainWindow::getThresholdingDosPicos(){
+    this->controler.getThresholdingDosPicos();
+    ui->labelImageOut->setPixmap(QPixmap::fromImage(controler.getImageOutLabel()));
+    ui->labelImageOut->setStatusTip(QObject::trUtf8("Calculo de Dos Picos"));
+    ui->labelImageOut->setScaledContents(true);
+    ui->labelImageOut->update();
+}
+
+void MainWindow::getThresholdingIsodata(){
+    this->controler.getThresholdingIsodata();
+    ui->labelImageOut->setPixmap(QPixmap::fromImage(controler.getImageOutLabel()));
+    ui->labelImageOut->setStatusTip(QObject::trUtf8("Calculo de Isodata"));
+    ui->labelImageOut->setScaledContents(true);
+    ui->labelImageOut->update();
+}
+
+void MainWindow::getThresholdingOtsu(){
+    this->controler.getThresholdingOtsu();
+    ui->labelImageOut->setPixmap(QPixmap::fromImage(controler.getImageOutLabel()));
+    ui->labelImageOut->setStatusTip(QObject::trUtf8("Calculo de Otsu"));
+    ui->labelImageOut->setScaledContents(true);
+    ui->labelImageOut->update();
 }
 
 void MainWindow::showAbout(){
