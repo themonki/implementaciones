@@ -392,7 +392,7 @@ void Image::saveImage(string path){
                     if(isRangeLevel(value)){
                         imageOut << value << "\t";
                     }else{
-                        //cout << value << " - "<<graysScale[i][j] << " - "<< i << " - "<<j << endl;
+                        cout << value << " - "<<graysScale[i][j] << " - "<< i << " - "<<j << endl;
                         const char* s= "GrayValue-saveImage";
                         throw ImageExeption(VALOR_FUERA_RANGO_NIVEL, s);
                     }
@@ -517,7 +517,7 @@ void Image::readDicomImage(string path)
 
 
     DcmFileFormat fileformat;
-    OFCondition status = fileformat.loadFile("test.dcm");
+    OFCondition status = fileformat.loadFile(path.c_str());
     if (status.good())
     {
         OFString patientName;
@@ -531,7 +531,20 @@ void Image::readDicomImage(string path)
 
 
 
-    DicomImage *image = new DicomImage("test.dcm");
+
+
+    DicomImage *image = new DicomImage(path.c_str());
+
+    width = image->getWidth();
+    height = image->getHeight();
+    level = 255;
+    type = "P2";
+
+
+    this->graysScale.resize(this->height);
+
+
+
     if (image != NULL)
     {
         if (image->getStatus() == EIS_Normal)
@@ -540,17 +553,23 @@ void Image::readDicomImage(string path)
             if (pixelData != NULL)
             {
                 int contador = 0;
-                for(int i=0;i<256;i++)
+                for(int i=0;i<height;i++)
                 {
-                    for(int j=0;j<256;j++)
+                    this->graysScale[i].resize(this->width);
+                    for(int j=0;j<width;j++)
                     {
 
-                        cout<< static_cast< int >( pixelData[contador] )<<"-";
+                        graysScale[i][j] = static_cast< int >( pixelData[contador] );
                         contador++;
                     }
-                    cout << " \n";
+
                 }
-                cout<< contador;
+
+                string pgmPath = path.substr(0,path.length()-4)+".pgm";
+
+                saveImage(pgmPath);
+
+
             }
         } else
             cerr << "Error: cannot load DICOM image (" << DicomImage::getString(image->getStatus()) << ")" << endl;
