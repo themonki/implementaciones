@@ -540,12 +540,11 @@ void Image::readDicomImage(string path)
 */
     DicomImage *image = new DicomImage(path.c_str());
     if (image->getStatus() != EIS_Normal){
+        cout << "status" << endl;
         DicomImage::getString(image->getStatus());
         return;
 
     }
-
-    cerr << "cargo imagen " << "" << endl;
 
     width = image->getWidth();
     height = image->getHeight();

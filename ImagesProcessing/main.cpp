@@ -8,7 +8,7 @@
 int main(int argc, char *argv[])
 {
      Image imagen;
-     //imagen.readDicomImage("../ImagenesPrueba/DCMTKSamples/brain.dcm");
+     imagen.readDicomImage("../ImagenesPrueba/DCMTKSamples/brain.dcm");
     //image.saveImage("../ImagenesPrueba/guardeP6.ppm");
 
     try{
@@ -49,7 +49,7 @@ int main(int argc, char *argv[])
         Image image2("../ImagenesPrueba/noisy.pgm");
         Image imageMedianFilter = filter.medianFilter(image2,3);
         imageMedianFilter.saveImage("../ImagenesPrueba/Denoysing.pgm");
-        */
+        *//*
         Image image2("../ImagenesPrueba/noisy.pgm");
         Image imageSigmaFilter = filter.sigmaFilter(image2,10);
         imageSigmaFilter.saveImage("../ImagenesPrueba/Denoysing4.pgm");

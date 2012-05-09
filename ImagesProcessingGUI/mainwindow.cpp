@@ -378,7 +378,7 @@ void MainWindow::applyFilterSigma(){
 void MainWindow::applyContrastGammaCorrection(){
     bool ok;
     double value = QInputDialog::getDouble(this, tr("Valor de calculo"),
-                                     tr("Ingrese r:"), 2.2,0,100,2,&ok);
+                                     tr("Ingrese el valor para calcular gamma:"), 2.2,0,100,2,&ok);
     this->controler.applyContrastCorrectionGamma(value);
     ui->labelImageOut->setPixmap(QPixmap::fromImage(controler.getImageOutLabel()));
     ui->labelImageOut->setStatusTip(QObject::trUtf8("Corrección Gamma Aplicado"));
@@ -397,7 +397,7 @@ void MainWindow::applyContrastExpansion(){
 void MainWindow::applyContrastImprove(){
     bool ok;
     int value = QInputDialog::getInt(this, tr("Valor de calculo"),
-                                     tr("Ingrese option:"), 1,0,100,1,&ok);
+                                     tr("Ingrese para escoger uno de los metodos:"), 0,0,1,1,&ok);
     this->controler.applyContrastImprove(value);
     ui->labelImageOut->setPixmap(QPixmap::fromImage(controler.getImageOutLabel()));
     ui->labelImageOut->setStatusTip(QObject::trUtf8("Contraste Improve Aplicado"));
