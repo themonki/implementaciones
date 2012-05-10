@@ -12,7 +12,8 @@ public:
     Image sigmaFilter(Image& image, int sigma);
     Image nagao_MatsuyamaFilter(Image& image, int win);
     double* calculateVariance(matrix grayScaleInput, int posPixelX, int posPixelY, int win, int dif, int subwind);
-
+    Image noiseCleaningPixel(Image& image, double delta);
+    Image noiseCleaningLine(Image& image, double delta);
 };
 
 #endif // FILTER_H

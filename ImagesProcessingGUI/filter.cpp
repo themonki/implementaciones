@@ -252,5 +252,84 @@ Image Filter::nagao_MatsuyamaFilter(Image &image, int win){
 }
 
 
+Image Filter::noiseCleaningPixel(Image &image, double delta){
+    Image imageOuput;
+
+    int height = image.getHeight();
+    int width = image.getWidth();
+
+    imageOuput.setHeight(height);
+    imageOuput.setWidth(width);
+    imageOuput.setType(image.getType());
+    imageOuput.setLevel(image.getLevel());
+
+    matrix grayScaleInput = image.getGraysScale();
+    matrix grayScaleOuput = image.getGraysScale();
+
+
+    for(int i =1; i< height-1; i++){
+        for(int j =1; j< width-1; j++){
+            double test=grayScaleInput[i][j], neighbors,sum=0;
+            sum+=grayScaleInput[i-1][j-1];
+            sum+=grayScaleInput[i-1][j];
+            sum+=grayScaleInput[i-1][j+1];
+            sum+=grayScaleInput[i][j-1];
+            sum+=grayScaleInput[i][j+1];
+            sum+=grayScaleInput[i+1][j-1];
+            sum+=grayScaleInput[i+1][j];
+            sum+=grayScaleInput[i+1][j+1];
+            neighbors = sum / 8.0;
+
+            if(fabs(test - neighbors) > delta){
+                grayScaleOuput[i][j]=neighbors;
+            }else{
+                grayScaleOuput[i][j]=test;
+            }
+        }
+    }
+
+    imageOuput.setGraysScale(grayScaleOuput);
+
+    return imageOuput;
+
+
+}
+
+Image Filter::noiseCleaningLine(Image &image, double delta){
+    Image imageOuput;
+
+    int height = image.getHeight();
+    int width = image.getWidth();
+
+    imageOuput.setHeight(height);
+    imageOuput.setWidth(width);
+    imageOuput.setType(image.getType());
+    imageOuput.setLevel(image.getLevel());
+
+    matrix grayScaleInput = image.getGraysScale();
+    matrix grayScaleOuput = image.getGraysScale();
+
+
+    for(int i =0; i< height; i++){
+        for(int j =2; j< width-2; j++){
+            double test=grayScaleInput[i][j], neighbors,sum=0;
+            sum+=grayScaleInput[i][j-1];
+            sum+=grayScaleInput[i][j-2];
+            sum+=grayScaleInput[i][j+1];
+            sum+=grayScaleInput[i][j+2];
+            neighbors = sum / 4.0;
+
+            if(fabs(test - neighbors) > delta){
+                grayScaleOuput[i][j]=neighbors;
+            }else{
+                grayScaleOuput[i][j]=test;
+            }
+        }
+    }
+
+    imageOuput.setGraysScale(grayScaleOuput);
+
+    return imageOuput;
+}
 
 

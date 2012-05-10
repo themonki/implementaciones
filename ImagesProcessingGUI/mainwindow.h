@@ -33,8 +33,10 @@ private:
     QAction *menuCloseFile;
     QAction *menuApplyFilterSigma;
     QAction *menuApplyFilterMedian;
+    QAction *menuApplyFilterCleaningPixel;
+    QAction *menuApplyFilterCleaningLine;
     QAction *menuApplyContrastGammaCorrection;
-    QAction *menuApplyContrastExpansion;
+    QAction *menuApplyContrastStretching;
     QAction *menuApplyContrastImprove;
     QAction *menuApplyEqualizer;
     QAction *menuThresholdingDosPicosGet;
@@ -55,9 +57,11 @@ private:
     QAction* createActionSaveFile();
     QAction* createActionCloseFile();
     QAction* createActionFilterSigma();
-    QAction* createActionFilterMedian();
+    QAction* createActionFilterMedian();    
+    QAction* createActionFilterCleaningPixel();
+    QAction* createActionFilterCleaningLine();
     QAction* createActionContrastGammaCorrection();
-    QAction* createActionContrastExpansion();
+    QAction* createActionContrastStretching();
     QAction* createActionContrastImprove();
     QAction* createActionEqualizer();
     QAction* createActionHistogram();
@@ -76,8 +80,10 @@ private slots:
     void closeFile();
     void applyFilterSigma();
     void applyFilterMedian();
+    void applyFilterCleaningPixel();
+    void applyFilterCleaningLine();
     void applyContrastGammaCorrection();
-    void applyContrastExpansion();
+    void applyContrastStretching();
     void applyContrastImprove();
     void applyEqualizer();
     void getHistogram();

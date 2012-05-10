@@ -27,7 +27,7 @@ private:
 public:
     Controler();
     void openImage(QString);
-    void saveImage(QString, QImage);
+    void saveImage(QString);
     void setImageIn(Image*);
     void setImageOut(Image*);
     void setImageInLabel(QImage);
@@ -38,8 +38,10 @@ public:
     QImage getImageOutLabel();
     void applyFilterSigma(int sigma);
     void applyFilterMedian(int);
+    void applyFilterCleaningPixel(double);
+    void applyFilterCleaningLine(double);
     void applyContrastCorrectionGamma(double r);
-    void applyContrastExpansion();
+    void applyContrastStretching();
     void applyContrastImprove(int option);
     void applyEqualizer();
     QImage getHistogram();

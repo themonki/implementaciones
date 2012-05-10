@@ -137,7 +137,7 @@ Image Contrast::gammaCorrection(Image& image, double r)
 
 }
 
-Image Contrast::contrastExpansion(Image& image)
+Image Contrast::contrastStretching(Image& image)
 {
     obtainContrast(image);
     int level=image.getLevel();

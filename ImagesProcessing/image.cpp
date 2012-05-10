@@ -530,7 +530,7 @@ void Image::readDicomImage(string path)
         cerr << "Error: cannot read DICOM file (" << status.text() << ")" << endl;
 
 
-    DicomImage *image = new DicomImage("test.dcm");
+    DicomImage *image = new DicomImage(path.c_str());
 
     image->getStatus();
 
@@ -567,7 +567,7 @@ void Image::readDicomImage(string path)
                 }
 
                 string pgmPath = path.substr(0,path.length()-4)+".pgm";
-
+                cout << pgmPath << endl;
                 saveImage(pgmPath);
 
 

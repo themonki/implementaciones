@@ -12,6 +12,8 @@ void Controler::openImage(QString path){
     if(!path.toStdString().substr(path.toStdString().length()-4, 4).compare(".dcm")){
         this->dicomImage=true;
         this->ppmImage=true;
+        this->imageIn= new Image();
+        this->imageOut= new Image();
         this->imageIn->readDicomImage(path.toStdString());
         this->imageOut->readDicomImage(path.toStdString());
         return;
@@ -44,7 +46,7 @@ void Controler::openImage(QString path){
     }
 
 }
-void Controler::saveImage(QString path, QImage img){
+void Controler::saveImage(QString path){
 
 
     /*Image* img;
@@ -221,6 +223,24 @@ void Controler::applyFilterMedian(int n){
    // convertImage(*imageOut, imageOutLabel);
 }
 
+void Controler::applyFilterCleaningPixel(double delta){
+    Filter filtro;
+        Image tempImageOut = filtro.noiseCleaningPixel(*imageOut, delta), *temp;
+    tempImageOut.saveImage(QDir::currentPath().append("/file.pgm").toStdString());
+    this->imageOutLabel.load(QDir::currentPath().append("/file.pgm"));
+    temp = new Image(QDir::currentPath().append("/file.pgm").toStdString());
+    this->imageOut = temp;
+}
+
+void Controler::applyFilterCleaningLine(double delta){
+    Filter filtro;
+        Image tempImageOut = filtro.noiseCleaningLine(*imageOut, delta), *temp;
+    tempImageOut.saveImage(QDir::currentPath().append("/file.pgm").toStdString());
+    this->imageOutLabel.load(QDir::currentPath().append("/file.pgm"));
+    temp = new Image(QDir::currentPath().append("/file.pgm").toStdString());
+    this->imageOut = temp;
+}
+
 QImage Controler::getHistogram(){
     Histogram h(*this->imageOut);
     Image imgH = h.getImageHistogram();
@@ -233,9 +253,9 @@ QImage Controler::getHistogram(){
     return imgcopy;
 }
 
-void Controler::applyContrastExpansion(){
+void Controler::applyContrastStretching(){
     Contrast c;
-    Image img= c.contrastExpansion(*this->imageOut), *temp;
+    Image img= c.contrastStretching(*this->imageOut), *temp;
     img.saveImage(QDir::currentPath().toStdString().append("/file.pgm"));
     this->imageOutLabel.load(QDir::currentPath().append("/file.pgm"));
     temp = new Image(QDir::currentPath().append("/file.pgm").toStdString());

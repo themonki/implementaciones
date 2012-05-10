@@ -29,7 +29,7 @@ public:
 
 
     Image gammaCorrection(Image& image, double r);
-    Image contrastExpansion(Image& image);
+    Image contrastStretching(Image& image);
     Image improveContrast(Image& image, int option);
     Image applyEqulizer(Image& image);
 
