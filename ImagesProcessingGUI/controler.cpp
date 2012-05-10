@@ -9,13 +9,22 @@ Controler::Controler()
 void Controler::openImage(QString path){
 
 
-    if(!path.toStdString().substr(path.toStdString().length()-4, 4).compare(".dcm")){
+    if(!path.toStdString().substr(path.toStdString().length()-4, 4).compare(".dcm")){//si es una imagen dicom
         this->dicomImage=true;
-        this->ppmImage=true;
+        this->ppmImage=false;
         this->imageIn= new Image();
         this->imageOut= new Image();
         this->imageIn->readDicomImage(path.toStdString());
         this->imageOut->readDicomImage(path.toStdString());
+        this->imageIn->saveImage("file2.pgm");
+
+        QImage i, j;
+        i = QImage();
+        j = QImage();
+        i.load("file2.pgm");
+        this->imageInLabel = i;
+        j.load("file2.pgm");
+        this->imageOutLabel = j;
         return;
     }
 
@@ -140,7 +149,7 @@ QImage Controler::getImageOutLabel(){
 QImage Controler::convertImage(Image & image, QImage & img){
 
 
-    cout << img.format()  <<" size " << img.width()<<"," << img.height() << " - " << imageIn->getWidth() <<","<<imageIn->getHeight() << endl;
+    //cout << img.format()  <<" size " << img.width()<<"," << img.height() << " - " << imageIn->getWidth() <<","<<imageIn->getHeight() << endl;
 
     for(int i = 0; i< img.height(); i++){
         for(int j = 0;j< img.width(); j++){
@@ -154,7 +163,7 @@ QImage Controler::convertImage(Image & image, QImage & img){
            // }
         }
     }
-    cerr << "terminamos"<<endl << endl;
+    //cerr << "terminamos"<<endl << endl;
 
 
     return img;

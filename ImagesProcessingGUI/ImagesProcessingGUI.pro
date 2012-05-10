@@ -18,7 +18,8 @@ SOURCES += main.cpp\
     filter.cpp \
     histogram.cpp \
     thresholding.cpp \
-    contrast.cpp
+    contrast.cpp \
+    imageviewer.cpp
 
 HEADERS  += mainwindow.h \
     image.h \
@@ -27,7 +28,8 @@ HEADERS  += mainwindow.h \
     filter.h \
     histogram.h \
     thresholding.h \
-    contrast.h
+    contrast.h \
+    imageviewer.h
 
 FORMS    += mainwindow.ui
 

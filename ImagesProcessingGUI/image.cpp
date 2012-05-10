@@ -392,7 +392,7 @@ void Image::saveImage(string path){
                     if(isRangeLevel(value)){
                         imageOut << value << "\t";
                     }else{
-                        cout << value << " - "<<graysScale[i][j] << " - "<< i << " - "<<j << endl;
+                        //cout << value << " - "<<graysScale[i][j] << " - "<< i << " - "<<j << endl;
                         const char* s= "GrayValue-saveImage";
                         throw ImageExeption(VALOR_FUERA_RANGO_NIVEL, s);
                     }
@@ -483,7 +483,7 @@ void Image::saveImage(string path){
 
 void Image::clearImage(){
     //para limpiar todos los vectores y datos
-    if(this->graysScale.size() == height){
+    if(this->graysScale.size() == (unsigned)height){
         for(int i = 0; i < height; i++){
             this->graysScale[i].clear();
 
@@ -524,9 +524,6 @@ void Image::readDicomImage(string path)
     {
         if (imageDicom->getStatus() == EIS_Normal)
         {
-            this->width=0; height =0;
-
-            cout << "width";
 
             width = imageDicom->getWidth();
             height = imageDicom->getHeight();
@@ -553,9 +550,8 @@ void Image::readDicomImage(string path)
 
                 }
 
-                string pgmPath = path.substr(0,path.length()-4)+".pgm";
-                saveImage(pgmPath);
-
+                /*string pgmPath = "dcm.pgm";
+                saveImage(pgmPath);*/
 
             }
         } else

@@ -8,6 +8,7 @@
 #include <QMessageBox>
 #include <QInputDialog>
 #include "controler.h"
+#include "imageviewer.h"
 
 
 
@@ -26,6 +27,8 @@ public:
 private:
 
     Controler controler;
+    ImageViewer *in, *out, *h;
+    QLabel *labelImageIn,*labelImageOut, *labelHistogram;
 
     QString path;
     QAction *menuOpenFile;

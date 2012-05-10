@@ -14,6 +14,15 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->menubar->addMenu(this->histogramMenu);
     ui->menubar->addMenu(this->contrastMenu);
     ui->menubar->addMenu(this->helpMenu);
+    in = new ImageViewer();
+    out= new ImageViewer();
+    h= new ImageViewer();
+    this->labelImageIn = in->getImageLabel();
+    this->labelImageOut = out->getImageLabel();
+    this->labelHistogram = h->getImageLabel();
+    ui->scrollAreaIn->setWidget(in->centralWidget());
+    ui->scrollAreaOut->setWidget(out->centralWidget());
+    ui->scrollAreaHistogram->setWidget(h->centralWidget());
 
     setWindowTitle(tr("Image Processing"));
 
@@ -317,16 +326,21 @@ void MainWindow::openFile(){
     }
 
 
+    in->getImageLabel()->setPixmap(QPixmap::fromImage(controler.getImageInLabel()));
+    in->getImageLabel()->adjustSize();
+    //this->labelImageIn->setScaledContents(true);
 
-    ui->labelImageIn->setPixmap(QPixmap::fromImage(controler.getImageInLabel()));
-    ui->labelImageIn->setScaledContents(true);
-    ui->labelImageOut->setPixmap(QPixmap::fromImage(controler.getImageInLabel()));
-    ui->labelImageOut->setScaledContents(true);
+    this->labelImageOut->setPixmap(QPixmap::fromImage(controler.getImageInLabel()));
+    out->getImageLabel()->adjustSize();
 
-    ui->labelHistogram->setPixmap(QPixmap::fromImage(QImage()));
-    ui->labelImageIn->update();
-    ui->labelImageOut->update();
-    ui->labelHistogram->update();
+    //this->labelImageOut->setScaledContents(true);
+
+    this->labelHistogram->setPixmap(QPixmap::fromImage(QImage()));
+    h->getImageLabel()->adjustSize();
+
+    //this->labelImageIn->update();
+    //this->labelImageOut->update();
+    //this->labelHistogram->update();
 
 }
 
@@ -356,9 +370,9 @@ void MainWindow::closeFile(){
 
     this->controler.clearAll();
 
-    ui->labelImageIn->setPixmap(QPixmap::fromImage(QImage()));
-    ui->labelImageOut->setPixmap(QPixmap::fromImage(QImage()));
-    ui->labelHistogram->setPixmap(QPixmap::fromImage(QImage()));
+    this->labelImageIn->setPixmap(QPixmap::fromImage(QImage()));
+    this->labelImageOut->setPixmap(QPixmap::fromImage(QImage()));
+    this->labelHistogram->setPixmap(QPixmap::fromImage(QImage()));
 
     this->menuCloseFile->setEnabled(false);
     this->menuSaveFile->setEnabled(false);
@@ -383,10 +397,10 @@ void MainWindow::applyFilterMedian(){
     int value = QInputDialog::getInt(this, tr("Valor de calculo"),
                                      tr("Ingrese n:"), 3,0,100,1,&ok);
     this->controler.applyFilterMedian(value);
-    ui->labelImageOut->setPixmap(QPixmap::fromImage(controler.getImageOutLabel()));
-    ui->labelImageOut->setStatusTip("Filtro Mediana Aplicado");
-    ui->labelImageOut->setScaledContents(true);
-    ui->labelImageOut->update();
+    this->labelImageOut->setPixmap(QPixmap::fromImage(controler.getImageOutLabel()));
+    this->labelImageOut->setStatusTip("Filtro Mediana Aplicado");
+    this->labelImageOut->setScaledContents(true);
+    this->labelImageOut->update();
 }
 
 void MainWindow::applyFilterSigma(){
@@ -394,10 +408,10 @@ void MainWindow::applyFilterSigma(){
     int value = QInputDialog::getInt(this, tr("Valor de calculo"),
                                      tr("Ingrese sigma:"), 10,0,100,1,&ok);
     this->controler.applyFilterSigma(value);
-    ui->labelImageOut->setPixmap(QPixmap::fromImage(controler.getImageOutLabel()));
-    ui->labelImageOut->setStatusTip("Filtro Sigma Aplicado");
-    ui->labelImageOut->setScaledContents(true);
-    ui->labelImageOut->update();
+    this->labelImageOut->setPixmap(QPixmap::fromImage(controler.getImageOutLabel()));
+    this->labelImageOut->setStatusTip("Filtro Sigma Aplicado");
+    this->labelImageOut->setScaledContents(true);
+    this->labelImageOut->update();
 
 }
 
@@ -406,10 +420,10 @@ void MainWindow::applyFilterCleaningPixel(){
     double value = QInputDialog::getDouble(this, tr("Valor de calculo"),
                                      tr("Ingrese el valor para delta:"), 10.0,0,100,2,&ok);
     this->controler.applyFilterCleaningPixel(value);
-    ui->labelImageOut->setPixmap(QPixmap::fromImage(controler.getImageOutLabel()));
-    ui->labelImageOut->setStatusTip("Filtro Cleaning Pixel Aplicado");
-    ui->labelImageOut->setScaledContents(true);
-    ui->labelImageOut->update();
+    this->labelImageOut->setPixmap(QPixmap::fromImage(controler.getImageOutLabel()));
+    this->labelImageOut->setStatusTip("Filtro Cleaning Pixel Aplicado");
+    this->labelImageOut->setScaledContents(true);
+    this->labelImageOut->update();
 }
 
 void MainWindow::applyFilterCleaningLine(){
@@ -417,10 +431,10 @@ void MainWindow::applyFilterCleaningLine(){
     double value = QInputDialog::getDouble(this, tr("Valor de calculo"),
                                      tr("Ingrese el valor para delta:"), 10.0,0,100,2,&ok);
     this->controler.applyFilterCleaningLine(value);
-    ui->labelImageOut->setPixmap(QPixmap::fromImage(controler.getImageOutLabel()));
-    ui->labelImageOut->setStatusTip("Filtro Cleaning Pixel Aplicado");
-    ui->labelImageOut->setScaledContents(true);
-    ui->labelImageOut->update();
+    this->labelImageOut->setPixmap(QPixmap::fromImage(controler.getImageOutLabel()));
+    this->labelImageOut->setStatusTip("Filtro Cleaning Pixel Aplicado");
+    this->labelImageOut->setScaledContents(true);
+    this->labelImageOut->update();
 }
 
 void MainWindow::applyContrastGammaCorrection(){
@@ -428,18 +442,18 @@ void MainWindow::applyContrastGammaCorrection(){
     double value = QInputDialog::getDouble(this, tr("Valor de calculo"),
                                      tr("Ingrese el valor para calcular gamma:"), 2.2,0,100,2,&ok);
     this->controler.applyContrastCorrectionGamma(value);
-    ui->labelImageOut->setPixmap(QPixmap::fromImage(controler.getImageOutLabel()));
-    ui->labelImageOut->setStatusTip(QObject::trUtf8("Corrección Gamma Aplicado"));
-    ui->labelImageOut->setScaledContents(true);
-    ui->labelImageOut->update();
+    this->labelImageOut->setPixmap(QPixmap::fromImage(controler.getImageOutLabel()));
+    this->labelImageOut->setStatusTip(QObject::trUtf8("Corrección Gamma Aplicado"));
+    this->labelImageOut->setScaledContents(true);
+    this->labelImageOut->update();
 }
 
 void MainWindow::applyContrastStretching(){
     this->controler.applyContrastStretching();
-    ui->labelImageOut->setPixmap(QPixmap::fromImage(controler.getImageOutLabel()));
-    ui->labelImageOut->setStatusTip(QObject::trUtf8("Contraste Stretching Aplicado"));
-    ui->labelImageOut->setScaledContents(true);
-    ui->labelImageOut->update();
+    this->labelImageOut->setPixmap(QPixmap::fromImage(controler.getImageOutLabel()));
+    this->labelImageOut->setStatusTip(QObject::trUtf8("Contraste Stretching Aplicado"));
+    this->labelImageOut->setScaledContents(true);
+    this->labelImageOut->update();
 }
 
 void MainWindow::applyContrastImprove(){
@@ -447,50 +461,51 @@ void MainWindow::applyContrastImprove(){
     int value = QInputDialog::getInt(this, tr("Valor de calculo"),
                                      tr("Ingrese para escoger uno de los metodos:"), 0,0,1,1,&ok);
     this->controler.applyContrastImprove(value);
-    ui->labelImageOut->setPixmap(QPixmap::fromImage(controler.getImageOutLabel()));
-    ui->labelImageOut->setStatusTip(QObject::trUtf8("Contraste Improve Aplicado"));
-    ui->labelImageOut->setScaledContents(true);
-    ui->labelImageOut->update();
+    this->labelImageOut->setPixmap(QPixmap::fromImage(controler.getImageOutLabel()));
+    this->labelImageOut->setStatusTip(QObject::trUtf8("Contraste Improve Aplicado"));
+    this->labelImageOut->setScaledContents(true);
+    this->labelImageOut->update();
 }
 
 void MainWindow::applyEqualizer(){
     this->controler.applyEqualizer();
-    ui->labelImageOut->setPixmap(QPixmap::fromImage(controler.getImageOutLabel()));
-    ui->labelImageOut->setStatusTip(QObject::trUtf8("Equalizador Aplicado"));
-    ui->labelImageOut->setScaledContents(true);
-    ui->labelImageOut->update();
+    this->labelImageOut->setPixmap(QPixmap::fromImage(controler.getImageOutLabel()));
+    this->labelImageOut->setStatusTip(QObject::trUtf8("Equalizador Aplicado"));
+    this->labelImageOut->setScaledContents(true);
+    this->labelImageOut->update();
 }
 
 void MainWindow::getHistogram(){
     QImage a = controler.getHistogram();
-    ui->labelHistogram->setPixmap(QPixmap::fromImage(a));
-    ui->labelHistogram->setStatusTip("Histograma calculado");
-    ui->labelHistogram->setScaledContents(true);
-    ui->labelHistogram->update();
+    this->h->getImageLabel()->setPixmap(QPixmap::fromImage(a));
+    this->h->setStatusTip("Histograma calculado");
+    this->h->getImageLabel()->adjustSize();
+    //this->labelHistogram->setScaledContents(true);
+    //this->labelHistogram->update();
 }
 
 void MainWindow::getThresholdingDosPicos(){
     this->controler.getThresholdingDosPicos();
-    ui->labelImageOut->setPixmap(QPixmap::fromImage(controler.getImageOutLabel()));
-    ui->labelImageOut->setStatusTip(QObject::trUtf8("Calculo de Dos Picos"));
-    ui->labelImageOut->setScaledContents(true);
-    ui->labelImageOut->update();
+    this->labelImageOut->setPixmap(QPixmap::fromImage(controler.getImageOutLabel()));
+    this->labelImageOut->setStatusTip(QObject::trUtf8("Calculo de Dos Picos"));
+    this->labelImageOut->setScaledContents(true);
+    this->labelImageOut->update();
 }
 
 void MainWindow::getThresholdingIsodata(){
     this->controler.getThresholdingIsodata();
-    ui->labelImageOut->setPixmap(QPixmap::fromImage(controler.getImageOutLabel()));
-    ui->labelImageOut->setStatusTip(QObject::trUtf8("Calculo de Isodata"));
-    ui->labelImageOut->setScaledContents(true);
-    ui->labelImageOut->update();
+    this->labelImageOut->setPixmap(QPixmap::fromImage(controler.getImageOutLabel()));
+    this->labelImageOut->setStatusTip(QObject::trUtf8("Calculo de Isodata"));
+    this->labelImageOut->setScaledContents(true);
+    this->labelImageOut->update();
 }
 
 void MainWindow::getThresholdingOtsu(){
     this->controler.getThresholdingOtsu();
-    ui->labelImageOut->setPixmap(QPixmap::fromImage(controler.getImageOutLabel()));
-    ui->labelImageOut->setStatusTip(QObject::trUtf8("Calculo de Otsu"));
-    ui->labelImageOut->setScaledContents(true);
-    ui->labelImageOut->update();
+    this->labelImageOut->setPixmap(QPixmap::fromImage(controler.getImageOutLabel()));
+    this->labelImageOut->setStatusTip(QObject::trUtf8("Calculo de Otsu"));
+    this->labelImageOut->setScaledContents(true);
+    this->labelImageOut->update();
 }
 
 void MainWindow::showAbout(){
