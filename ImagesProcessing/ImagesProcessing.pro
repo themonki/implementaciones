@@ -4,7 +4,8 @@
     thresholding.h \
     imageexeption.h \
     filter.h \
-    contrast.h
+    contrast.h \
+    edge.h
 
 SOURCES += \
     image.cpp \
@@ -13,7 +14,8 @@ SOURCES += \
     main.cpp \
     imageexeption.cpp \
     filter.cpp \
-    contrast.cpp
+    contrast.cpp \
+    edge.cpp
 
 QMAKE_CXXFLAGS += -DHAVE_CONFIG_H
 

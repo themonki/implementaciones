@@ -3,12 +3,17 @@
 #include "thresholding.h"
 #include "contrast.h"
 #include "filter.h"
+#include "edge.h"
 
 
 int main(int argc, char *argv[])
 {
-     Image imagen;
-     imagen.readDicomImage("../ImagenesPrueba/DCMTKSamples/brain2.dcm");
+     Image imagen("../ImagenesPrueba/lena512p2.pgm");
+
+     Edge e;
+     Image profile = e.getProfileIntensityOnY(imagen, 6);
+     profile.saveImage("../ImagenesPrueba/profileLena.pgm");
+     //imagen.readDicomImage("../ImagenesPrueba/DCMTKSamples/brain2.dcm");
     //image.saveImage("../ImagenesPrueba/guardeP6.ppm");
 
     try{
@@ -46,13 +51,13 @@ int main(int argc, char *argv[])
 
         Filter filter;
 
-        Image image2("../ImagenesPrueba/noisy.pgm");
+        /*Image image2("../ImagenesPrueba/noisy.pgm");
         Image imageNoiseCleaningPixel = filter.noiseCleaningPixel(image2, 10.0);
         imageNoiseCleaningPixel.saveImage("../ImagenesPrueba/cleanPixel2.pgm");
         /*Image imageMedianFilter = filter.medianFilter(image2,3);
         imageMedianFilter.saveImage("../ImagenesPrueba/Denoysing.pgm");
         */
-
+/*
         Image imageSigmaFilter = filter.medianFilter(image2,10);
         imageSigmaFilter.saveImage("../ImagenesPrueba/Denoysing4.pgm");
         //image.readDicomImage("asdasd");
