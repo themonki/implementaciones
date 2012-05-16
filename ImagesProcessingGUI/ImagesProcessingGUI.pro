@@ -19,7 +19,8 @@ SOURCES += main.cpp\
     histogram.cpp \
     thresholding.cpp \
     contrast.cpp \
-    imageviewer.cpp
+    imageviewer.cpp \
+    operationarithmetic.cpp
 
 HEADERS  += mainwindow.h \
     image.h \
@@ -29,7 +30,8 @@ HEADERS  += mainwindow.h \
     histogram.h \
     thresholding.h \
     contrast.h \
-    imageviewer.h
+    imageviewer.h \
+    operationarithmetic.h
 
 FORMS    += mainwindow.ui
 
