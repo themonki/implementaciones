@@ -4,18 +4,46 @@
 #include "contrast.h"
 #include "filter.h"
 #include "edge.h"
+#include "operationarithmetic.h"
 
 
 int main(int argc, char *argv[])
 {
-     Image imagen("../ImagenesPrueba/lena512p2.pgm");
+     //Image imagen("../ImagenesPrueba/lena512p2.pgm");
 
-     Edge e;
-     Image profile = e.getProfileIntensityOnY(imagen, 6);
-     profile.saveImage("../ImagenesPrueba/profileLena.pgm");
+     //Edge e;
+     //Image profile = e.getProfileIntensityOnY(imagen, 6);
+     //profile.saveImage("../ImagenesPrueba/profileLena.pgm");
+/*
+     Image imageadd1("../ImagenesPrueba/mandrill256.ppm");
+     Image imageadd2("../ImagenesPrueba/monalisa256.ppm");
+
+     imageadd1.colorToGraysScale();
+     imageadd2.colorToGraysScale();
+
+     imageadd1.saveImage("../ImagenesPrueba/op1.pgm");
+     imageadd2.saveImage("../ImagenesPrueba/op2.pgm");
+
+
+     OperationArithmetic op;
+     Image addValue = op.additionValue(imageadd1, 30);
+     addValue.saveImage("../ImagenesPrueba/addValue.pgm");
+
+     Image divValue = op.divisionValue(imageadd1, 10);
+     divValue.saveImage("../ImagenesPrueba/divValue.pgm");
+
+     Image mulValue = op.multiplicationValue(imageadd1, 3);
+     mulValue.saveImage("../ImagenesPrueba/mulValue.pgm");
+
+     Image subValue = op.subtractionValue(imageadd1, 30);
+     subValue.saveImage("../ImagenesPrueba/subValue.pgm");
+
+     Image adds = op.additionImages(imageadd1,imageadd2, 0.3);
+     adds.saveImage("../ImagenesPrueba/adds.pgm");
+
      //imagen.readDicomImage("../ImagenesPrueba/DCMTKSamples/brain2.dcm");
     //image.saveImage("../ImagenesPrueba/guardeP6.ppm");
-
+/**/
     try{
         //Image image("../ImagenesPrueba/lena256.ppm");
 

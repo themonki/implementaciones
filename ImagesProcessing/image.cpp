@@ -358,16 +358,40 @@ void Image::setGraysScale(matrix graysScale){
 
 //Calcula la escala de grises de una imagen a color
 void Image::colorToGraysScale(){
-    //Se le dan tamaño a la matriz Y
-    this->graysScale.resize(this->height);
-    for(int i=0; i<this->height; i++)
-        this->graysScale[i].resize(this->width);
+    if(!this->type.compare("P6") || !this->type.compare("P3")){
 
-    //Se hacen las operaciones para hallar los valores de la matriz Y
-    for(int i=0; i<this->height; i++)
-        for(int j=0; j<this->width; j++)
-            this->graysScale[i][j]=Wr*this->red[i][j]+Wg*this->green[i][j]+Wb*this->blue[i][j]; //Hallar Y
+        if(this->graysScale.size() == (unsigned)height){
+            for(int i = 0; i < height; i++){
+                this->graysScale[i].clear();
+
+            }
+            this->graysScale.clear();
+        }
+        //Se le dan tamaño a la matriz Y
+        this->graysScale.resize(this->height);
+        for(int i=0; i<this->height; i++)
+            this->graysScale[i].resize(this->width);
+
+        //Se hacen las operaciones para hallar los valores de la matriz Y
+        for(int i=0; i<this->height; i++)
+            for(int j=0; j<this->width; j++)
+                this->graysScale[i][j]=Wr*this->red[i][j]+Wg*this->green[i][j]+Wb*this->blue[i][j];
+
+        this->type="P2";
+        /*Para no perder los datos*//*
+        for(int i = 0; i < height; i++){
+            this->blue[i].clear();
+            this->red[i].clear();
+            this->green[i].clear();
+        }
+        this->blue.clear();
+        this->red.clear();
+        this->green.clear();
+        /**/
+
+    }
 }
+
 
 
 

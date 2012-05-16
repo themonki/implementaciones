@@ -358,16 +358,40 @@ void Image::setGraysScale(matrix graysScale){
 
 //Calcula la escala de grises de una imagen a color
 void Image::colorToGraysScale(){
-    //Se le dan tamaño a la matriz Y
-    this->graysScale.resize(this->height);
-    for(int i=0; i<this->height; i++)
-        this->graysScale[i].resize(this->width);
+    if(!this->type.compare("P6") || !this->type.compare("P3")){
 
-    //Se hacen las operaciones para hallar los valores de la matriz Y
-    for(int i=0; i<this->height; i++)
-        for(int j=0; j<this->width; j++)
-            this->graysScale[i][j]=Wr*this->red[i][j]+Wg*this->green[i][j]+Wb*this->blue[i][j]; //Hallar Y
+        if(this->graysScale.size() == (unsigned)height){
+            for(int i = 0; i < height; i++){
+                this->graysScale[i].clear();
+
+            }
+            this->graysScale.clear();
+        }
+        //Se le dan tamaño a la matriz Y
+        this->graysScale.resize(this->height);
+        for(int i=0; i<this->height; i++)
+            this->graysScale[i].resize(this->width);
+
+        //Se hacen las operaciones para hallar los valores de la matriz Y
+        for(int i=0; i<this->height; i++)
+            for(int j=0; j<this->width; j++)
+                this->graysScale[i][j]=Wr*this->red[i][j]+Wg*this->green[i][j]+Wb*this->blue[i][j];
+
+        this->type="P2";
+        /*Para no perder los datos*//*
+        for(int i = 0; i < height; i++){
+            this->blue[i].clear();
+            this->red[i].clear();
+            this->green[i].clear();
+        }
+        this->blue.clear();
+        this->red.clear();
+        this->green.clear();
+        /**/
+
+    }
 }
+
 
 
 
@@ -392,7 +416,7 @@ void Image::saveImage(string path){
                     if(isRangeLevel(value)){
                         imageOut << value << "\t";
                     }else{
-                        //cout << value << " - "<<graysScale[i][j] << " - "<< i << " - "<<j << endl;
+                        cout << value << " - "<<graysScale[i][j] << " - "<< i << " - "<<j << endl;
                         const char* s= "GrayValue-saveImage";
                         throw ImageExeption(VALOR_FUERA_RANGO_NIVEL, s);
                     }
@@ -483,22 +507,19 @@ void Image::saveImage(string path){
 
 void Image::clearImage(){
     //para limpiar todos los vectores y datos
-    if(this->graysScale.size() == (unsigned)height){
-        for(int i = 0; i < height; i++){
-            this->graysScale[i].clear();
+    for(int i = 0; i < height; i++){
+        this->blue[i].clear();
+        this->red[i].clear();
+        this->green[i].clear();
+        this->graysScale[i].clear();
 
-        }
-         this->graysScale.clear();
-    }else{
-        for(int i = 0; i < height; i++){
-            this->blue[i].clear();
-            this->red[i].clear();
-            this->green[i].clear();
-        }
-        this->blue.clear();
-        this->red.clear();
-        this->green.clear();
     }
+
+    this->blue.clear();
+    this->red.clear();
+    this->green.clear();
+    this->graysScale.clear();
+
     this->width=0;
     this->height=0;
     this->type.clear();
@@ -518,22 +539,41 @@ bool Image::isRangeLevel(int number){
 void Image::readDicomImage(string path)
 {
 
-    DicomImage *imageDicom = new DicomImage(path.c_str());
 
-    if (imageDicom != NULL)
+    DcmFileFormat fileformat;
+    OFCondition status = fileformat.loadFile(path.c_str());
+    if (status.good())
     {
-        if (imageDicom->getStatus() == EIS_Normal)
+        OFString patientName;
+        if (fileformat.getDataset()->findAndGetOFString(DCM_PatientName, patientName).good())
+        {
+            cout << "Patient's Name: " << patientName << endl;
+        } else
+            cerr << "Error: cannot access Patient's Name!" << endl;
+    } else
+        cerr << "Error: cannot read DICOM file (" << status.text() << ")" << endl;
+
+
+    DicomImage *image = new DicomImage(path.c_str());
+
+    image->getStatus();
+
+    width = image->getWidth();
+    height = image->getHeight();
+    level = 255;
+    type = "P2";
+
+
+    this->graysScale.resize(this->height);
+
+
+
+    if (image != NULL)
+    {
+        if (image->getStatus() == EIS_Normal)
         {
 
-            width = imageDicom->getWidth();
-            height = imageDicom->getHeight();
-            level = 255;
-            type = "P2";
-
-
-            this->graysScale.resize(this->height);
-
-            Uint8 *pixelData = (Uint8 *)(imageDicom->getOutputData(8)); // bits per sample
+            Uint8 *pixelData = (Uint8 *)(image->getOutputData(8)); // bits per sample
 
             if (pixelData != NULL)
             {
@@ -550,14 +590,16 @@ void Image::readDicomImage(string path)
 
                 }
 
-                /*string pgmPath = "dcm.pgm";
-                saveImage(pgmPath);*/
+                string pgmPath = path.substr(0,path.length()-4)+".pgm";
+                cout << pgmPath << endl;
+                saveImage(pgmPath);
+
 
             }
         } else
-            cerr << "Error: cannot load DICOM image (" << DicomImage::getString(imageDicom->getStatus()) << ")" << endl;
+            cerr << "Error: cannot load DICOM image (" << DicomImage::getString(image->getStatus()) << ")" << endl;
     }
-    delete imageDicom;
+    delete image;
 
 
 
