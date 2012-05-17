@@ -331,6 +331,9 @@ bool Controler::isDicomImage(){return dicomImage;}
 bool Controler::isppmImage(){return ppmImage;}
 
 void Controler::clearAll(){
+    if(this->dicomImage){
+
+    }
     this->imageIn->clearImage();
     this->imageOut->clearImage();
     this->dicomImage=false;

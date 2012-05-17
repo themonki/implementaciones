@@ -507,18 +507,24 @@ void Image::saveImage(string path){
 
 void Image::clearImage(){
     //para limpiar todos los vectores y datos
-    for(int i = 0; i < height; i++){
-        this->blue[i].clear();
-        this->red[i].clear();
-        this->green[i].clear();
-        this->graysScale[i].clear();
+    if(graysScale.size()==(unsigned)height){
+        if(this->graysScale.size() == (unsigned)height){
+            for(int i = 0; i < height; i++){
+                this->graysScale[i].clear();
 
+            }
+            this->graysScale.clear();
+        }
+    }else if(blue.size()==(unsigned)height){
+        for(int i = 0; i < height; i++){
+            this->blue[i].clear();
+            this->red[i].clear();
+            this->green[i].clear();
+        }
+        this->blue.clear();
+        this->red.clear();
+        this->green.clear();
     }
-
-    this->blue.clear();
-    this->red.clear();
-    this->green.clear();
-    this->graysScale.clear();
 
     this->width=0;
     this->height=0;
