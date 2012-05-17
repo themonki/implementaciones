@@ -9,11 +9,14 @@
 
 int main(int argc, char *argv[])
 {
-     //Image imagen("../ImagenesPrueba/lena512p2.pgm");
+     Image imagen("../ImagenesPrueba/lena512p2.pgm");
 
-     //Edge e;
+     Edge e;
+     Image sobel = e.applySobel(imagen);
+     sobel.saveImage("../ImagenesPrueba/sobelLena.pgm");
      //Image profile = e.getProfileIntensityOnY(imagen, 6);
      //profile.saveImage("../ImagenesPrueba/profileLena.pgm");
+
 /*
      Image imageadd1("../ImagenesPrueba/mandrill256.ppm");
      Image imageadd2("../ImagenesPrueba/monalisa256.ppm");
