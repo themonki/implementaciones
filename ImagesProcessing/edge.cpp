@@ -62,16 +62,6 @@ Image Edge::applySobel(Image &image){
     matrix grayScaleOuput = image.getGraysScale();
 
 
-    cout <<endl<< Sy[0][0]<< " ";
-    cout << Sx[0][1]<< " ";
-    cout << Sx[0][2]<< endl;
-    cout << Sx[1][0]<< " ";
-    cout << Sx[1][1]<< " ";
-    cout << Sx[1][2]<< endl;
-    cout << Sx[2][0]<< " ";
-    cout << Sx[2][1]<< " ";
-    cout << Sx[2][2]<< endl;
-
     for (int i=0; i < height; i++ ){
         for (int j=0; j < width; j++ ){
             if(i==0 || j==0 || i==height-1 || j==width-1){// si son los bordes de la imagen completa
