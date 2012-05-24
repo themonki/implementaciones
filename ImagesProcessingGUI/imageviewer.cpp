@@ -25,7 +25,7 @@
 
  #include "imageviewer.h"
 
- ImageViewer::ImageViewer()
+ImageViewer::ImageViewer(QWidget *parent):QMainWindow(parent)
  {
      imageLabel = new QLabel;
      imageLabel->setBackgroundRole(QPalette::Dark);
@@ -37,185 +37,192 @@
      scrollArea->setWidget(imageLabel);
      setCentralWidget(scrollArea);
 
-     createActions();
-     createMenus();
+     resize(500, 400);
+ }
+ImageViewer::ImageViewer(Image img2, QImage image, QString title, QWidget *parent):QMainWindow(parent)
+{
+    this->img = new Image();
+    img->setBlue(img2.getBlue());
+    img->setGraysScale(img2.getGraysScale());
+    img->setGreen(img2.getGreen());
 
-     //setWindowTitle(tr("Image Viewer"));
-     //resize(500, 400);
+    img->setHeight(img2.getHeight());
+    img->setLevel(img2.getLevel());
+    img->setRed(img2.getRed());
+    img->setType(img2.getType());
+    img->setWidth(img2.getWidth());
+
+    initComponents(image,title);
+    createActions();
+    createMenus();
+}
+ ImageViewer::ImageViewer(QImage image,QString title, QWidget *parent):QMainWindow(parent)
+ {
+    initComponents(image,title);
+
+ }
+
+ void ImageViewer::initComponents(QImage image, QString title){
+     if (image.isNull()) {
+         QMessageBox::information(this, tr("Image Viewer"), tr("No se puede cargar la imagen"));
+         return;
+     }
+     imageLabel = new QLabel;
+     imageLabel->setBackgroundRole(QPalette::Dark);
+     imageLabel->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+
+     scrollArea = new QScrollArea;
+     scrollArea->setBackgroundRole(QPalette::Dark);
+     scrollArea->setWidget(imageLabel);
+     setCentralWidget(scrollArea);
+
+     imageLabel->setPixmap(QPixmap::fromImage(image));
+     imageLabel->adjustSize();
+
+     this->setWindowTitle(title);
+     resize(500, 400);
+     this->show();
+
+     scaleFactor = 1.0;
  }
 
  QLabel* ImageViewer::getImageLabel(){return this->imageLabel;}
 
- void ImageViewer::open()
- {
-     QString fileName = QFileDialog::getOpenFileName(this,
-                                     tr("Open File"), QDir::currentPath());
-     if (!fileName.isEmpty()) {
-         QImage image(fileName);
-         if (image.isNull()) {
-             QMessageBox::information(this, tr("Image Viewer"),
-                                      tr("Cannot load %1.").arg(fileName));
-             return;
-         }
-         imageLabel->setPixmap(QPixmap::fromImage(image));
-         scaleFactor = 1.0;
-
-         printAct->setEnabled(true);
-         fitToWindowAct->setEnabled(true);
-         updateActions();
-
-         if (!fitToWindowAct->isChecked())
-             imageLabel->adjustSize();
-     }
- }
-
- void ImageViewer::print()
- {
-     Q_ASSERT(imageLabel->pixmap());
-     QPrintDialog dialog(&printer, this);
-     if (dialog.exec()) {
-         QPainter painter(&printer);
-         QRect rect = painter.viewport();
-         QSize size = imageLabel->pixmap()->size();
-         size.scale(rect.size(), Qt::KeepAspectRatio);
-         painter.setViewport(rect.x(), rect.y(), size.width(), size.height());
-         painter.setWindow(imageLabel->pixmap()->rect());
-         painter.drawPixmap(0, 0, *imageLabel->pixmap());
-     }
- }
-
- void ImageViewer::zoomIn()
- {
-     scaleImage(1.25);
- }
-
- void ImageViewer::zoomOut()
- {
-     scaleImage(0.8);
- }
-
- void ImageViewer::normalSize()
- {
-     imageLabel->adjustSize();
-     scaleFactor = 1.0;
- }
-
- void ImageViewer::fitToWindow()
- {
-     bool fitToWindow = fitToWindowAct->isChecked();
-     scrollArea->setWidgetResizable(fitToWindow);
-     if (!fitToWindow) {
-         normalSize();
-     }
-     updateActions();
- }
-
- void ImageViewer::about()
- {
-     QMessageBox::about(this, tr("About Image Viewer"),
-             tr("<p>The <b>Image Viewer</b> example shows how to combine QLabel "
-                "and QScrollArea to display an image. QLabel is typically used "
-                "for displaying a text, but it can also display an image. "
-                "QScrollArea provides a scrolling view around another widget. "
-                "If the child widget exceeds the size of the frame, QScrollArea "
-                "automatically provides scroll bars. </p><p>The example "
-                "demonstrates how QLabel's ability to scale its contents "
-                "(QLabel::scaledContents), and QScrollArea's ability to "
-                "automatically resize its contents "
-                "(QScrollArea::widgetResizable), can be used to implement "
-                "zooming and scaling features. </p><p>In addition the example "
-                "shows how to use QPainter to print an image.</p>"));
- }
+ QWidget* ImageViewer::getWidget(){return centralWidget();}
 
  void ImageViewer::createActions()
  {
-     openAct = new QAction(tr("&Open..."), this);
-     openAct->setShortcut(tr("Ctrl+O"));
-     connect(openAct, SIGNAL(triggered()), this, SLOT(open()));
-
-     printAct = new QAction(tr("&Print..."), this);
-     printAct->setShortcut(tr("Ctrl+P"));
-     printAct->setEnabled(false);
-     connect(printAct, SIGNAL(triggered()), this, SLOT(print()));
-
      exitAct = new QAction(tr("E&xit"), this);
      exitAct->setShortcut(tr("Ctrl+Q"));
      connect(exitAct, SIGNAL(triggered()), this, SLOT(close()));
 
      zoomInAct = new QAction(tr("Zoom &In (25%)"), this);
      zoomInAct->setShortcut(tr("Ctrl++"));
-     zoomInAct->setEnabled(false);
-     connect(zoomInAct, SIGNAL(triggered()), this, SLOT(zoomIn()));
+     connect(zoomInAct, SIGNAL(triggered()), this, SLOT(scaleUp()));
 
      zoomOutAct = new QAction(tr("Zoom &Out (25%)"), this);
      zoomOutAct->setShortcut(tr("Ctrl+-"));
-     zoomOutAct->setEnabled(false);
-     connect(zoomOutAct, SIGNAL(triggered()), this, SLOT(zoomOut()));
+     connect(zoomOutAct, SIGNAL(triggered()), this, SLOT(scaleDown()));
+}
 
-     normalSizeAct = new QAction(tr("&Normal Size"), this);
-     normalSizeAct->setShortcut(tr("Ctrl+S"));
-     normalSizeAct->setEnabled(false);
-     connect(normalSizeAct, SIGNAL(triggered()), this, SLOT(normalSize()));
 
-     fitToWindowAct = new QAction(tr("&Fit to Window"), this);
-     fitToWindowAct->setEnabled(false);
-     fitToWindowAct->setCheckable(true);
-     fitToWindowAct->setShortcut(tr("Ctrl+F"));
-     connect(fitToWindowAct, SIGNAL(triggered()), this, SLOT(fitToWindow()));
 
-     aboutAct = new QAction(tr("&About"), this);
-     connect(aboutAct, SIGNAL(triggered()), this, SLOT(about()));
-
-     aboutQtAct = new QAction(tr("About &Qt"), this);
-     connect(aboutQtAct, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
- }
 
  void ImageViewer::createMenus()
  {
      fileMenu = new QMenu(tr("&File"), this);
-     fileMenu->addAction(openAct);
-     fileMenu->addAction(printAct);
-     fileMenu->addSeparator();
      fileMenu->addAction(exitAct);
 
      viewMenu = new QMenu(tr("&View"), this);
      viewMenu->addAction(zoomInAct);
      viewMenu->addAction(zoomOutAct);
-     viewMenu->addAction(normalSizeAct);
-     viewMenu->addSeparator();
-     viewMenu->addAction(fitToWindowAct);
 
-     helpMenu = new QMenu(tr("&Help"), this);
-     helpMenu->addAction(aboutAct);
-     helpMenu->addAction(aboutQtAct);
 
      menuBar()->addMenu(fileMenu);
      menuBar()->addMenu(viewMenu);
-     menuBar()->addMenu(helpMenu);
- }
-
- void ImageViewer::updateActions()
- {
-     zoomInAct->setEnabled(!fitToWindowAct->isChecked());
-     zoomOutAct->setEnabled(!fitToWindowAct->isChecked());
-     normalSizeAct->setEnabled(!fitToWindowAct->isChecked());
  }
 
  void ImageViewer::scaleImage(double factor)
  {
-     Q_ASSERT(imageLabel->pixmap());
-     scaleFactor *= factor;
-     imageLabel->resize(scaleFactor * imageLabel->pixmap()->size());
+     OperationGeometric opg;
+     Image temp = opg.scaleBilinearGray(*img,(double) fabs( factor));
+     temp.saveImage("file.pgm");
+     QImage scalada("file.pgm");
 
-     adjustScrollBar(scrollArea->horizontalScrollBar(), factor);
-     adjustScrollBar(scrollArea->verticalScrollBar(), factor);
+     imageLabel->setPixmap(QPixmap::fromImage(scalada));
+     imageLabel->adjustSize();
+
 
      zoomInAct->setEnabled(scaleFactor < 3.0);
      zoomOutAct->setEnabled(scaleFactor > 0.333);
+
  }
 
- void ImageViewer::adjustScrollBar(QScrollBar *scrollBar, double factor)
+
+ void ImageViewer::changeEvent(QEvent *e)
  {
-     scrollBar->setValue(int(factor * scrollBar->value()
-                             + ((factor - 1) * scrollBar->pageStep()/2)));
+   QMainWindow::changeEvent(e);
+   switch (e->type())
+   {
+   case QEvent::LanguageChange:
+     //ui->retranslateUi(this);
+     break;
+   default:
+     break;
+   }
  }
+
+ //Added
+ void ImageViewer::resizeEvent(QResizeEvent*)
+ {
+   /*static int n_times = 0;
+   QString s; s = s.number(n_times);
+
+   setWindowTitle("hola " + s);
+   ++n_times;
+*/
+ }
+
+
+
+ void ImageViewer::wheelEvent(QWheelEvent *e){//para escalar imagen
+     return;
+     if (e->modifiers().testFlag(Qt::ControlModifier)){ // zoom only when CTRL key pressed
+         int scale = e->delta()/120;
+
+         if (scale == 0) {
+             e->ignore();
+             return;
+         }else if(scale<0){
+
+            /* OperationGeometric opg;
+             Image temp = opg.scaleBilinearGray(*img,(double)(fabs(scale)*0.2));
+             temp.saveImage("file.pgm");
+             QImage scalada("file.pgm");
+             QLabel *label= (QLabel*)(ui->viewport);
+
+             label->setPixmap(QPixmap::fromImage(scalada));
+             //ui->viewport = label;
+             ui->viewport->update();*/
+
+         }else {//mayor
+             /*OperationGeometric opg;
+             Image temp = opg.scaleBilinearGray(*img,(double)  scale);
+             temp.saveImage("file.pgm");
+             QImage scalada("file.pgm");
+             QLabel *label= new QLabel;
+             label->setPixmap(QPixmap::fromImage(scalada));
+             ui->viewport = label;
+             ui->viewport->update();*/
+
+         }
+
+         e->accept();
+
+     }
+
+ }
+
+ void ImageViewer::scaleDown(){
+     this->scaleFactor*=0.8;
+     scaleImage(this->scaleFactor);
+
+ }
+
+ void ImageViewer::scaleUp(){
+     this->scaleFactor*=1.25;
+     scaleImage(this->scaleFactor);
+ }
+/*
+ void ImageViewer::scaleImage(double scale){
+     OperationGeometric opg;
+     Image temp = opg.scaleBilinearGray(*img,(double) fabs( scale));
+     temp.saveImage("file.pgm");
+     QImage scalada("file.pgm");
+     QLabel *label= (QLabel*)(ui->viewport);
+     label->setPixmap(QPixmap::fromImage(scalada));
+     //ui->viewport->update();
+
+     //ui->buttonScaleUp->setEnabled(numScale < 3.0);
+     //ui->buttonScaleDown->setEnabled(numScale > 0.333);
+ }*/

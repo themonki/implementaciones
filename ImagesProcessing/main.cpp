@@ -5,13 +5,21 @@
 #include "filter.h"
 #include "edge.h"
 #include "operationarithmetic.h"
+#include "operationgeometric.h"
 
 
 int main(int argc, char *argv[])
 {
-     Image imagen("../ImagenesPrueba/lena512p2.pgm");
+    Image imagen("../ImagenesPrueba/lena512p2.pgm");
 
-     Edge e;
+    OperationGeometric opg;
+    Image scaleout = opg.scaleBilinearGray(imagen, 0.75);
+    scaleout.saveImage("../ImagenesPrueba/scaleOutlena.pgm");
+    Image scalein = opg.scaleBilinearGray(imagen, 2.0);
+    scalein.saveImage("../ImagenesPrueba/scaleInlena.pgm");
+
+
+    /*Edge e;
      Image sobel = e.applySobel(imagen);
      sobel.saveImage("../ImagenesPrueba/sobelLena.pgm");
      //Image profile = e.getProfileIntensityOnY(imagen, 6);
@@ -88,7 +96,7 @@ int main(int argc, char *argv[])
         /*Image imageMedianFilter = filter.medianFilter(image2,3);
         imageMedianFilter.saveImage("../ImagenesPrueba/Denoysing.pgm");
         */
-/*
+        /*
         Image imageSigmaFilter = filter.medianFilter(image2,10);
         imageSigmaFilter.saveImage("../ImagenesPrueba/Denoysing4.pgm");
         //image.readDicomImage("asdasd");

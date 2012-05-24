@@ -6,7 +6,8 @@
     filter.h \
     contrast.h \
     edge.h \
-    operationarithmetic.h
+    operationarithmetic.h \
+    operationgeometric.h
 
 SOURCES += \
     image.cpp \
@@ -17,7 +18,8 @@ SOURCES += \
     filter.cpp \
     contrast.cpp \
     edge.cpp \
-    operationarithmetic.cpp
+    operationarithmetic.cpp \
+    operationgeometric.cpp
 
 QMAKE_CXXFLAGS += -DHAVE_CONFIG_H
 

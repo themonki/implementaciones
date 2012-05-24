@@ -9,23 +9,28 @@ MainWindow::MainWindow(QWidget *parent) :
 
     this->path = QDir::homePath();
     this->createMenus();
+    this->createEvents();
     ui->menubar->addMenu(this->fileMenu);
+    ui->menubar->addMenu(this->toolsMenu);
     ui->menubar->addMenu(this->filterMenu);
     ui->menubar->addMenu(this->histogramMenu);
     ui->menubar->addMenu(this->contrastMenu);
     ui->menubar->addMenu(this->helpMenu);
-    in = new ImageViewer();
-    out= new ImageViewer();
-    h= new ImageViewer();
-    this->labelImageIn = in->getImageLabel();
-    this->labelImageOut = out->getImageLabel();
-    this->labelHistogram = h->getImageLabel();
-    ui->scrollAreaIn->setWidget(in->centralWidget());
-    ui->scrollAreaOut->setWidget(out->centralWidget());
-    ui->scrollAreaHistogram->setWidget(h->centralWidget());
+    //in = new ImageViewer(this);
+    //out= new ImageViewer(this);
+    //h= new ImageViewer(this);
+    //this->labelImageIn = ui->labelImageIn= in->getImageLabel();
+    //this->labelImageOut = ui->labelImageOut= out->getImageLabel();
+    //this->labelHistogram = ui->labelHistogram= h->getImageLabel();
+    //this->labelImageIn = new QLabel();
+    //this->labelImageOut = new QLabel();
+    //this->labelHistogram = new QLabel();
+    //ui->scrollAreaIn->setWidget(in->centralWidget());
+    //ui->scrollAreaOut->setWidget(out->centralWidget());
+    //ui->scrollAreaHistogram->setWidget(h->centralWidget());
 
     setWindowTitle(tr("Image Processing"));
-
+    //setWindowFlags(Qt::WindowFlags() | Qt::WindowStaysOnTopHint);
     /*************CENTRAR EN PANTALLA*************************/
     QDesktopWidget *desktop = QApplication::desktop();
 
@@ -45,6 +50,7 @@ MainWindow::MainWindow(QWidget *parent) :
     x = (screenWidth - width) / 2;
     y = (screenHeight - height) / 2;
     y -= 50;
+    y=20;
 
     // move window to desired coordinates
     move ( x, y );
@@ -86,6 +92,15 @@ QAction* MainWindow::createActionCloseFile()
      act = new QAction(tr("&Cerrar"), this);
      connect(act, SIGNAL(triggered()), this, SLOT(closeFile()));
      this->menuCloseFile = act;
+     return act;
+}
+
+QAction* MainWindow::createActionConvertToGraySacale()
+ {
+     QAction *act;
+     act = new QAction(tr("Convertir a Grises"), this);
+     connect(act, SIGNAL(triggered()), this, SLOT(convertToGrayScale()));
+     this->menuConvertToGrayScale = act;
      return act;
 }
 
@@ -220,6 +235,56 @@ QAction* MainWindow::createActionAbout()
      return act;
 }
 
+QAction* MainWindow::createActionAddImages()
+{
+    QAction *act;
+    act = new QAction(tr("Sumar dos Imagenes"), this);
+    connect(act, SIGNAL(triggered()), this, SLOT(addImage()));
+    act->setStatusTip(QObject::trUtf8("Sumar dos imagenes"));
+    this->menuAddImages = act;
+    return act;
+}
+
+QAction* MainWindow::createActionAddValue()
+{
+    QAction *act;
+    act = new QAction(tr("Adicionar valor a la imagen"), this);
+    connect(act, SIGNAL(triggered()), this, SLOT(addValue()));
+    act->setStatusTip(QObject::trUtf8("Aumentada el nivel de la imagen"));
+    this->menuAddValue = act;
+    return act;
+}
+
+QAction* MainWindow::createActionDivValue()
+{
+    QAction *act;
+    act = new QAction(tr("Dividir valor a la imagen"), this);
+    connect(act, SIGNAL(triggered()), this, SLOT(divValue()));
+    act->setStatusTip(QObject::trUtf8("Divide el nivel de la imagen"));
+    this->menuDivValue = act;
+    return act;
+}
+
+QAction* MainWindow::createActionMulValue()
+{
+    QAction *act;
+    act = new QAction(tr("Multiplicar valor a la imagen"), this);
+    connect(act, SIGNAL(triggered()), this, SLOT(mulValue()));
+    act->setStatusTip(QObject::trUtf8("Multiplica el nivel de la imagen"));
+    this->menuMulValue = act;
+    return act;
+}
+
+QAction* MainWindow::createActionSubValue()
+{
+    QAction *act;
+    act = new QAction(tr("Resta valor a la imagen"), this);
+    connect(act, SIGNAL(triggered()), this, SLOT(subValue()));
+    act->setStatusTip(QObject::trUtf8("Disminuye el nivel de la imagen"));
+    this->menuSubValue = act;
+    return act;
+}
+
 void MainWindow::createMenus(){
 
     this->fileMenu = new QMenu(tr("&Archivo"));
@@ -229,7 +294,19 @@ void MainWindow::createMenus(){
     this->menuSaveFile->setEnabled(false);
     this->menuCloseFile->setEnabled(false);
 
-
+    this->toolsMenu = new QMenu(tr("Herramientas"));
+    this->toolsMenu->addAction(createActionConvertToGraySacale());
+    this->toolsMenu->addAction(createActionAddImages());
+    this->toolsMenu->addAction(createActionAddValue());
+    this->toolsMenu->addAction(createActionSubValue());
+    this->toolsMenu->addAction(createActionMulValue());
+    this->toolsMenu->addAction(createActionDivValue());
+    this->menuConvertToGrayScale->setEnabled(false);
+    this->menuAddImages->setEnabled(false);
+    this->menuAddValue->setEnabled(false);
+    this->menuSubValue->setEnabled(false);
+    this->menuDivValue->setEnabled(false);
+    this->menuMulValue->setEnabled(false);
 
     this->filterMenu = new QMenu(tr("&Filtro"));
     this->filterMenu->addAction(createActionFilterMedian());
@@ -263,16 +340,91 @@ void MainWindow::createMenus(){
     this->menuApplyContrastImprove->setEnabled(false);
     this->menuApplyEqualizer->setEnabled(false);
 
-
-
     this->helpMenu = new QMenu(tr("&Ayuda"));
     this->helpMenu->addAction(createActionAbout());
+
+
+    ui->buttonShowIn->setEnabled(false);
+    ui->buttonShowOut->setEnabled(false);
+    ui->buttonRestore->setEnabled(false);
+    ui->buttonHistogramIn->setEnabled(false);
+    ui->buttonHistogramOut->setEnabled(false);
+
+}
+
+void MainWindow::createEvents(){
+
+    QObject::connect(ui->buttonShowIn,SIGNAL(clicked()), this, SLOT(showImageFullIn()));
+    QObject::connect(ui->buttonShowOut,SIGNAL(clicked()), this, SLOT(showImageFullOut()));
+    QObject::connect(ui->buttonHistogramIn,SIGNAL(clicked()), this, SLOT(showImageFullHistogramIn()));
+    QObject::connect(ui->buttonHistogramOut,SIGNAL(clicked()), this, SLOT(showImageFullHistogramOut()));
+    QObject::connect(ui->buttonRestore,SIGNAL(clicked()), this, SLOT(restoreImage()));
 
 
 
 }
 
+void MainWindow::initActions(){
+    this->menuCloseFile->setEnabled(true);
+    this->menuSaveFile->setEnabled(true);
+    if(!controler.isppmImage()){
+        this->menuHistogramGet->setEnabled(true);
+        this->menuApplyFilterMedian->setEnabled(true);
+        this->menuApplyFilterSigma->setEnabled(true);
+        this->menuApplyContrastStretching->setEnabled(true);
+        this->menuApplyContrastGammaCorrection->setEnabled(true);
+        this->menuApplyContrastImprove->setEnabled(true);
+        this->menuApplyEqualizer->setEnabled(true);
+        this->menuThresholdingIsodataGet->setEnabled(true);
+        this->menuThresholdingDosPicosGet->setEnabled(true);
+        this->menuThresholdingOtsuGet->setEnabled(true);
+        this->menuApplyFilterCleaningLine->setEnabled(true);
+        this->menuApplyFilterCleaningPixel->setEnabled(true);
 
+        this->menuConvertToGrayScale->setEnabled(false);
+
+        this->menuAddImages->setEnabled(true);
+        this->menuAddValue->setEnabled(true);
+        this->menuSubValue->setEnabled(true);
+        this->menuDivValue->setEnabled(true);
+        this->menuMulValue->setEnabled(true);
+
+        ui->buttonShowIn->setEnabled(true);
+        ui->buttonShowOut->setEnabled(true);
+        ui->buttonRestore->setEnabled(true);
+        ui->buttonHistogramIn->setEnabled(true);
+        ui->buttonHistogramOut->setEnabled(false);
+
+    }else{
+        this->menuApplyFilterMedian->setEnabled(false);
+        this->menuApplyFilterSigma->setEnabled(false);
+        this->menuHistogramGet->setEnabled(false);
+        this->menuApplyContrastStretching->setEnabled(false);
+        this->menuApplyContrastGammaCorrection->setEnabled(false);
+        this->menuApplyContrastImprove->setEnabled(false);
+        this->menuApplyEqualizer->setEnabled(false);
+        this->menuThresholdingIsodataGet->setEnabled(false);
+        this->menuThresholdingDosPicosGet->setEnabled(false);
+        this->menuThresholdingOtsuGet->setEnabled(false);
+        this->menuApplyFilterCleaningLine->setEnabled(false);
+        this->menuApplyFilterCleaningPixel->setEnabled(false);
+
+        this->menuConvertToGrayScale->setEnabled(true);
+
+        this->menuAddImages->setEnabled(false);
+        this->menuAddValue->setEnabled(false);
+        this->menuSubValue->setEnabled(false);
+        this->menuDivValue->setEnabled(false);
+        this->menuMulValue->setEnabled(false);
+
+        ui->buttonShowIn->setEnabled(true);
+        ui->buttonShowOut->setEnabled(false);
+        ui->buttonRestore->setEnabled(false);
+        ui->buttonHistogramIn->setEnabled(false);
+        ui->buttonHistogramOut->setEnabled(false);
+
+    }
+}
 
 void MainWindow::openFile(){
 
@@ -294,53 +446,40 @@ void MainWindow::openFile(){
         dialog.exec();
         return;
     }
-    this->menuCloseFile->setEnabled(true);
-    this->menuSaveFile->setEnabled(true);
-    if(!controler.isppmImage()){
-        this->menuHistogramGet->setEnabled(true);
-        this->menuApplyFilterMedian->setEnabled(true);
-        this->menuApplyFilterSigma->setEnabled(true);
-        this->menuApplyContrastStretching->setEnabled(true);
-        this->menuApplyContrastGammaCorrection->setEnabled(true);
-        this->menuApplyContrastImprove->setEnabled(true);
-        this->menuApplyEqualizer->setEnabled(true);
-        this->menuThresholdingIsodataGet->setEnabled(true);
-        this->menuThresholdingDosPicosGet->setEnabled(true);
-        this->menuThresholdingOtsuGet->setEnabled(true);        
-        this->menuApplyFilterCleaningLine->setEnabled(true);
-        this->menuApplyFilterCleaningPixel->setEnabled(true);
 
-    }else{
-        this->menuApplyFilterMedian->setEnabled(false);
-        this->menuApplyFilterSigma->setEnabled(false);
-        this->menuHistogramGet->setEnabled(false);
-        this->menuApplyContrastStretching->setEnabled(false);
-        this->menuApplyContrastGammaCorrection->setEnabled(false);
-        this->menuApplyContrastImprove->setEnabled(false);
-        this->menuApplyEqualizer->setEnabled(false);
-        this->menuThresholdingIsodataGet->setEnabled(false);
-        this->menuThresholdingDosPicosGet->setEnabled(false);
-        this->menuThresholdingOtsuGet->setEnabled(false);        
-        this->menuApplyFilterCleaningLine->setEnabled(false);
-        this->menuApplyFilterCleaningPixel->setEnabled(false);
-    }
+    initActions();
+    QPixmap tempPixmap;
+    tempPixmap = QPixmap::fromImage(controler.getImageInLabel());
+    //in->getImageLabel()->setPixmap(temp);
+    //in->getImageLabel()->adjustSize();
+    //this->labelImageIn->setPixmap(temp);
+    ui->labelImageIn->setPixmap(tempPixmap);
+    ui->labelImageIn->setScaledContents(true);
+
+    //new ImageViewer(controler.getImageInLabel(),this);
 
 
-    in->getImageLabel()->setPixmap(QPixmap::fromImage(controler.getImageInLabel()));
-    in->getImageLabel()->adjustSize();
-    //this->labelImageIn->setScaledContents(true);
+    //tempPixmap = QPixmap::fromImage(controler.getImageInLabel());
+    //this->labelImageOut->setPixmap(temp);
+    //out->getImageLabel()->adjustSize();
+    ui->labelImageOut->setPixmap(tempPixmap);
+    ui->labelImageOut->setScaledContents(true);
 
-    this->labelImageOut->setPixmap(QPixmap::fromImage(controler.getImageInLabel()));
-    out->getImageLabel()->adjustSize();
+    //this->labelHistogram->setPixmap(QPixmap::fromImage(QImage()));
+    ui->labelHistogram->setScaledContents(true);
 
-    //this->labelImageOut->setScaledContents(true);
+    ui->labelImageIn->update();
+    ui->labelImageOut->update();
+    //ui->labelHistogram->update();
 
-    this->labelHistogram->setPixmap(QPixmap::fromImage(QImage()));
-    h->getImageLabel()->adjustSize();
 
-    //this->labelImageIn->update();
-    //this->labelImageOut->update();
-    //this->labelHistogram->update();
+    //this->showIn = new ShowImage(viewer.getWidget(), 0);
+
+    //this->showIn = new ShowImage(controler.getImageInLabel(),"Imagen Original", this);
+    //this->showIn->open();
+   /* this->showOut = new ShowImage(controler.getImageOutLabel(),"Imagen Modificada",this);
+    this->showOut->open();
+    this->showOut->setImage(controler.getImageIn());/**/
 
 }
 
@@ -370,9 +509,9 @@ void MainWindow::closeFile(){
 
     this->controler.clearAll();
 
-    this->labelImageIn->setPixmap(QPixmap::fromImage(QImage()));
-    this->labelImageOut->setPixmap(QPixmap::fromImage(QImage()));
-    this->labelHistogram->setPixmap(QPixmap::fromImage(QImage()));
+    ui->labelImageIn->setPixmap(QPixmap::fromImage(QImage()));
+    ui->labelImageOut->setPixmap(QPixmap::fromImage(QImage()));
+    ui->labelHistogram->setPixmap(QPixmap::fromImage(QImage()));
 
     this->menuCloseFile->setEnabled(false);
     this->menuSaveFile->setEnabled(false);
@@ -388,8 +527,44 @@ void MainWindow::closeFile(){
     this->menuThresholdingIsodataGet->setEnabled(false);
     this->menuThresholdingDosPicosGet->setEnabled(false);
     this->menuThresholdingOtsuGet->setEnabled(false);
+    this->menuConvertToGrayScale->setEnabled(false);
+    this->menuAddImages->setEnabled(false);
+    this->menuAddValue->setEnabled(false);
+    this->menuSubValue->setEnabled(false);
+    this->menuDivValue->setEnabled(false);
+    this->menuMulValue->setEnabled(false);
 
 
+}
+
+void MainWindow::convertToGrayScale(){
+    if(controler.isppmImage()){
+        QImage temp = this->controler.applyConvertToGrayScale(controler.getImageOut(), controler.getImageOutLabel());
+        ui->labelImageOut->setPixmap(QPixmap::fromImage(temp));
+        ui->labelImageOut->setStatusTip("Imagen convertida a PGM");
+        ui->labelImageOut->setScaledContents(true);
+        ui->labelImageOut->update();
+
+        this->menuHistogramGet->setEnabled(true);
+        this->menuApplyFilterMedian->setEnabled(true);
+        this->menuApplyFilterSigma->setEnabled(true);
+        this->menuApplyContrastStretching->setEnabled(true);
+        this->menuApplyContrastGammaCorrection->setEnabled(true);
+        this->menuApplyContrastImprove->setEnabled(true);
+        this->menuApplyEqualizer->setEnabled(true);
+        this->menuThresholdingIsodataGet->setEnabled(true);
+        this->menuThresholdingDosPicosGet->setEnabled(true);
+        this->menuThresholdingOtsuGet->setEnabled(true);
+        this->menuApplyFilterCleaningLine->setEnabled(true);
+        this->menuApplyFilterCleaningPixel->setEnabled(true);
+        this->menuAddImages->setEnabled(true);
+        this->menuAddValue->setEnabled(true);
+        this->menuSubValue->setEnabled(true);
+        this->menuDivValue->setEnabled(true);
+        this->menuMulValue->setEnabled(true);
+
+
+    }
 }
 
 void MainWindow::applyFilterMedian(){
@@ -397,10 +572,10 @@ void MainWindow::applyFilterMedian(){
     int value = QInputDialog::getInt(this, tr("Valor de calculo"),
                                      tr("Ingrese n:"), 3,0,100,1,&ok);
     this->controler.applyFilterMedian(value);
-    this->labelImageOut->setPixmap(QPixmap::fromImage(controler.getImageOutLabel()));
-    this->labelImageOut->setStatusTip("Filtro Mediana Aplicado");
-    this->labelImageOut->setScaledContents(true);
-    this->labelImageOut->update();
+    ui->labelImageOut->setPixmap(QPixmap::fromImage(controler.getImageOutLabel()));
+    ui->labelImageOut->setStatusTip("Filtro Mediana Aplicado");
+    ui->labelImageOut->setScaledContents(true);
+    ui->labelImageOut->update();
 }
 
 void MainWindow::applyFilterSigma(){
@@ -408,10 +583,10 @@ void MainWindow::applyFilterSigma(){
     int value = QInputDialog::getInt(this, tr("Valor de calculo"),
                                      tr("Ingrese sigma:"), 10,0,100,1,&ok);
     this->controler.applyFilterSigma(value);
-    this->labelImageOut->setPixmap(QPixmap::fromImage(controler.getImageOutLabel()));
-    this->labelImageOut->setStatusTip("Filtro Sigma Aplicado");
-    this->labelImageOut->setScaledContents(true);
-    this->labelImageOut->update();
+    ui->labelImageOut->setPixmap(QPixmap::fromImage(controler.getImageOutLabel()));
+    ui->labelImageOut->setStatusTip("Filtro Sigma Aplicado");
+    ui->labelImageOut->setScaledContents(true);
+    ui->labelImageOut->update();
 
 }
 
@@ -420,10 +595,10 @@ void MainWindow::applyFilterCleaningPixel(){
     double value = QInputDialog::getDouble(this, tr("Valor de calculo"),
                                      tr("Ingrese el valor para delta:"), 10.0,0,100,2,&ok);
     this->controler.applyFilterCleaningPixel(value);
-    this->labelImageOut->setPixmap(QPixmap::fromImage(controler.getImageOutLabel()));
-    this->labelImageOut->setStatusTip("Filtro Cleaning Pixel Aplicado");
-    this->labelImageOut->setScaledContents(true);
-    this->labelImageOut->update();
+    ui->labelImageOut->setPixmap(QPixmap::fromImage(controler.getImageOutLabel()));
+    ui->labelImageOut->setStatusTip("Filtro Cleaning Pixel Aplicado");
+    ui->labelImageOut->setScaledContents(true);
+    ui->labelImageOut->update();
 }
 
 void MainWindow::applyFilterCleaningLine(){
@@ -431,29 +606,29 @@ void MainWindow::applyFilterCleaningLine(){
     double value = QInputDialog::getDouble(this, tr("Valor de calculo"),
                                      tr("Ingrese el valor para delta:"), 10.0,0,100,2,&ok);
     this->controler.applyFilterCleaningLine(value);
-    this->labelImageOut->setPixmap(QPixmap::fromImage(controler.getImageOutLabel()));
-    this->labelImageOut->setStatusTip("Filtro Cleaning Pixel Aplicado");
-    this->labelImageOut->setScaledContents(true);
-    this->labelImageOut->update();
+    ui->labelImageOut->setPixmap(QPixmap::fromImage(controler.getImageOutLabel()));
+    ui->labelImageOut->setStatusTip("Filtro Cleaning Pixel Aplicado");
+    ui->labelImageOut->setScaledContents(true);
+    ui->labelImageOut->update();
 }
 
 void MainWindow::applyContrastGammaCorrection(){
     bool ok;
     double value = QInputDialog::getDouble(this, tr("Valor de calculo"),
-                                     tr("Ingrese el valor para calcular gamma:"), 2.2,0,100,2,&ok);
+                                     tr("Ingrese el valor para calcular é gamma:"), 2.2,0,100,2,&ok);
     this->controler.applyContrastCorrectionGamma(value);
-    this->labelImageOut->setPixmap(QPixmap::fromImage(controler.getImageOutLabel()));
-    this->labelImageOut->setStatusTip(QObject::trUtf8("Corrección Gamma Aplicado"));
-    this->labelImageOut->setScaledContents(true);
-    this->labelImageOut->update();
+    ui->labelImageOut->setPixmap(QPixmap::fromImage(controler.getImageOutLabel()));
+    ui->labelImageOut->setStatusTip(QObject::trUtf8("Corrección Gamma Aplicado"));
+    ui->labelImageOut->setScaledContents(true);
+    ui->labelImageOut->update();
 }
 
 void MainWindow::applyContrastStretching(){
     this->controler.applyContrastStretching();
-    this->labelImageOut->setPixmap(QPixmap::fromImage(controler.getImageOutLabel()));
-    this->labelImageOut->setStatusTip(QObject::trUtf8("Contraste Stretching Aplicado"));
-    this->labelImageOut->setScaledContents(true);
-    this->labelImageOut->update();
+    ui->labelImageOut->setPixmap(QPixmap::fromImage(controler.getImageOutLabel()));
+    ui->labelImageOut->setStatusTip(QObject::trUtf8("Contraste Stretching Aplicado"));
+    ui->labelImageOut->setScaledContents(true);
+    ui->labelImageOut->update();
 }
 
 void MainWindow::applyContrastImprove(){
@@ -461,55 +636,154 @@ void MainWindow::applyContrastImprove(){
     int value = QInputDialog::getInt(this, tr("Valor de calculo"),
                                      tr("Ingrese para escoger uno de los metodos:"), 0,0,1,1,&ok);
     this->controler.applyContrastImprove(value);
-    this->labelImageOut->setPixmap(QPixmap::fromImage(controler.getImageOutLabel()));
-    this->labelImageOut->setStatusTip(QObject::trUtf8("Contraste Improve Aplicado"));
-    this->labelImageOut->setScaledContents(true);
-    this->labelImageOut->update();
+    ui->labelImageOut->setPixmap(QPixmap::fromImage(controler.getImageOutLabel()));
+    ui->labelImageOut->setStatusTip(QObject::trUtf8("Contraste Improve Aplicado"));
+    ui->labelImageOut->setScaledContents(true);
+    ui->labelImageOut->update();
 }
 
 void MainWindow::applyEqualizer(){
     this->controler.applyEqualizer();
-    this->labelImageOut->setPixmap(QPixmap::fromImage(controler.getImageOutLabel()));
-    this->labelImageOut->setStatusTip(QObject::trUtf8("Equalizador Aplicado"));
-    this->labelImageOut->setScaledContents(true);
-    this->labelImageOut->update();
+    ui->labelImageOut->setPixmap(QPixmap::fromImage(controler.getImageOutLabel()));
+    ui->labelImageOut->setStatusTip(QObject::trUtf8("Equalizador Aplicado"));
+    ui->labelImageOut->setScaledContents(true);
+    ui->labelImageOut->update();
 }
 
 void MainWindow::getHistogram(){
     QImage a = controler.getHistogram();
-    this->h->getImageLabel()->setPixmap(QPixmap::fromImage(a));
-    this->h->setStatusTip("Histograma calculado");
-    this->h->getImageLabel()->adjustSize();
+    ui->labelHistogram->setPixmap(QPixmap::fromImage(a));
+    ui->labelHistogram->setStatusTip("Histograma calculado");
+    ui->buttonHistogramOut->setEnabled(true);
     //this->labelHistogram->setScaledContents(true);
     //this->labelHistogram->update();
 }
 
 void MainWindow::getThresholdingDosPicos(){
     this->controler.getThresholdingDosPicos();
-    this->labelImageOut->setPixmap(QPixmap::fromImage(controler.getImageOutLabel()));
-    this->labelImageOut->setStatusTip(QObject::trUtf8("Calculo de Dos Picos"));
-    this->labelImageOut->setScaledContents(true);
-    this->labelImageOut->update();
+    ui->labelImageOut->setPixmap(QPixmap::fromImage(controler.getImageOutLabel()));
+    ui->labelImageOut->setStatusTip(QObject::trUtf8("Calculo de Dos Picos"));
+    ui->labelImageOut->setScaledContents(true);
+    ui->labelImageOut->update();
 }
 
 void MainWindow::getThresholdingIsodata(){
     this->controler.getThresholdingIsodata();
-    this->labelImageOut->setPixmap(QPixmap::fromImage(controler.getImageOutLabel()));
-    this->labelImageOut->setStatusTip(QObject::trUtf8("Calculo de Isodata"));
-    this->labelImageOut->setScaledContents(true);
-    this->labelImageOut->update();
+    ui->labelImageOut->setPixmap(QPixmap::fromImage(controler.getImageOutLabel()));
+    ui->labelImageOut->setStatusTip(QObject::trUtf8("Calculo de Isodata"));
+    ui->labelImageOut->setScaledContents(true);
+    ui->labelImageOut->update();
 }
 
 void MainWindow::getThresholdingOtsu(){
     this->controler.getThresholdingOtsu();
-    this->labelImageOut->setPixmap(QPixmap::fromImage(controler.getImageOutLabel()));
-    this->labelImageOut->setStatusTip(QObject::trUtf8("Calculo de Otsu"));
-    this->labelImageOut->setScaledContents(true);
-    this->labelImageOut->update();
+    ui->labelImageOut->setPixmap(QPixmap::fromImage(controler.getImageOutLabel()));
+    ui->labelImageOut->setStatusTip(QObject::trUtf8("Calculo de Otsu"));
+    ui->labelImageOut->setScaledContents(true);
+    ui->labelImageOut->update();
 }
 
 void MainWindow::showAbout(){
     QMessageBox dialog(this);
     dialog.setText(QObject::trUtf8("Aplicación para el manejo e implementacion de algoritmos para el procesamiento de imagenes.\n Integrantes:\n\tEdgar Andres Moncada\n\tYerminson Gonzalez"));
     dialog.exec();
+}
+
+void MainWindow::addImage(){
+
+    QString temp = QFileDialog::getOpenFileName( this,"Seleccionar Imagen a Adicionar",this->path,"Imagenes pgm o Dicom (*.pgm *.ppm *dcm)");
+    if(temp.isNull()){
+        return;
+    }
+
+    Image imageAdd(temp.toStdString());
+
+    if(imageAdd.getWidth()!=controler.getImageOut()->getWidth() || imageAdd.getHeight()!=controler.getImageOut()->getHeight()){
+        QMessageBox::information(this, tr("Error"), tr("No se puede sumar esat imagen"));
+        return;
+    }
+
+
+    bool ok;
+    double value = QInputDialog::getDouble(this, tr("Valor de calculo"),
+                                     tr("Ingrese porcentaje de solapamiento:"), 0,0,1,2,&ok);
+    this->controler.applyOperationAddImage(imageAdd, value);
+
+    ui->labelImageOut->setPixmap(QPixmap::fromImage(controler.getImageOutLabel()));
+    ui->labelImageOut->setStatusTip(QObject::trUtf8("Suma de Imagen aplicado"));
+    ui->labelImageOut->setScaledContents(true);
+    ui->labelImageOut->update();
+}
+
+void MainWindow::addValue(){
+    bool ok;
+    double value = QInputDialog::getDouble(this, tr("Valor de calculo"),
+                                     tr("Ingrese el valor para Adicionar:"), 0,0,255,2,&ok);
+    this->controler.applyOperationAddValue(value);
+    ui->labelImageOut->setPixmap(QPixmap::fromImage(controler.getImageOutLabel()));
+    ui->labelImageOut->setStatusTip(QObject::trUtf8("Suma de nivel aplicado"));
+    ui->labelImageOut->setScaledContents(true);
+    ui->labelImageOut->update();
+}
+
+void MainWindow::divValue(){
+    bool ok;
+    double value = QInputDialog::getDouble(this, tr("Valor de calculo"),
+                                     tr("Ingrese el valor para dividir:"), 1,0,100,2,&ok);
+    this->controler.applyOperationDivValue(value);
+    ui->labelImageOut->setPixmap(QPixmap::fromImage(controler.getImageOutLabel()));
+    ui->labelImageOut->setStatusTip(QObject::trUtf8("Division de nivel aplicado"));
+    ui->labelImageOut->setScaledContents(true);
+    ui->labelImageOut->update();
+}
+
+void MainWindow::mulValue(){
+    bool ok;
+    double value = QInputDialog::getDouble(this, tr("Valor de calculo"),
+                                     tr("Ingrese el valor para Multiplicar:"), 1,0,100,2,&ok);
+    this->controler.applyOperationMulValue(value);
+    ui->labelImageOut->setPixmap(QPixmap::fromImage(controler.getImageOutLabel()));
+    ui->labelImageOut->setStatusTip(QObject::trUtf8("Multiplicación de nivel aplicado"));
+    ui->labelImageOut->setScaledContents(true);
+    ui->labelImageOut->update();
+}
+
+void MainWindow::subValue(){
+    bool ok;
+    double value = QInputDialog::getDouble(this, tr("Valor de calculo"),
+                                     tr("Ingrese el valor para restar"), 0,0,100,2,&ok);
+    this->controler.applyOperationSubValue(value);
+    ui->labelImageOut->setPixmap(QPixmap::fromImage(controler.getImageOutLabel()));
+    ui->labelImageOut->setStatusTip(QObject::trUtf8("Resta de nivel aplicado"));
+    ui->labelImageOut->setScaledContents(true);
+    ui->labelImageOut->update();
+}
+
+
+// buttons events
+
+void MainWindow::showImageFullIn(){
+    new ImageViewer(*controler.getImageIn(), controler.getImageInLabel(),"Imagen de Entrada", this);
+
+}
+void MainWindow::showImageFullOut(){
+    new ImageViewer(*controler.getImageOut(), controler.getImageOutLabel(),"Imagen Modificada", this);
+
+}
+void MainWindow::showImageFullHistogramIn(){
+    new ImageViewer(controler.gethistogramInLabel(),"Histograma Original", this);
+
+}
+void MainWindow::showImageFullHistogramOut(){
+    new ImageViewer(controler.getHistogram(),"Histograma Imagen Modificada", this);
+
+}
+
+void MainWindow::restoreImage(){
+    initActions();
+    controler.openImage(path);
+    ui->labelHistogram->setPixmap(QPixmap::fromImage(QImage()));
+    QPixmap tempPixmap = QPixmap::fromImage(controler.getImageInLabel());
+    ui->labelImageIn->setPixmap(tempPixmap);
+    ui->labelImageOut->setPixmap(tempPixmap);
 }

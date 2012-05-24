@@ -20,7 +20,8 @@ SOURCES += main.cpp\
     thresholding.cpp \
     contrast.cpp \
     imageviewer.cpp \
-    operationarithmetic.cpp
+    operationarithmetic.cpp \
+    operationgeometric.cpp
 
 HEADERS  += mainwindow.h \
     image.h \
@@ -31,7 +32,8 @@ HEADERS  += mainwindow.h \
     thresholding.h \
     contrast.h \
     imageviewer.h \
-    operationarithmetic.h
+    operationarithmetic.h \
+    operationgeometric.h
 
 FORMS    += mainwindow.ui
 

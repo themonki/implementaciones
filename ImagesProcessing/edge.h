@@ -13,6 +13,7 @@ public:
     Edge();
     Image getProfileIntensityOnY(Image& img, int lineY);
     Image applySobel(Image& img);
+    Image applyCanny();
 
 };
 

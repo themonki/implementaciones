@@ -146,6 +146,14 @@ QImage Controler::getImageOutLabel(){
     return this->imageOutLabel;
 }
 
+QImage Controler::applyConvertToGrayScale(Image* img,QImage labelImage){
+    img->colorToGraysScale();
+    img->saveImage(QDir::currentPath().append("/file.pgm").toStdString());
+    labelImage.load(QDir::currentPath().append("/file.pgm"));
+    this->ppmImage=false;
+    return labelImage;
+}
+
 QImage Controler::convertImage(Image & image, QImage & img){
 
 
@@ -251,7 +259,20 @@ void Controler::applyFilterCleaningLine(double delta){
 }
 
 QImage Controler::getHistogram(){
+
     Histogram h(*this->imageOut);
+    Image imgH = h.getImageHistogram();
+
+    imgH.saveImage(QDir::currentPath().toStdString().append("/file.pgm"));
+    QImage imgcopy;
+    imgcopy.load(QDir::currentPath().append("/file.pgm"));
+
+    //cout <<  QDir::currentPath().append("/file.pgm").toStdString()<<endl << endl;
+    return imgcopy;
+}
+
+QImage Controler::gethistogramInLabel(){
+    Histogram h(*this->imageIn);
     Image imgH = h.getImageHistogram();
 
     imgH.saveImage(QDir::currentPath().toStdString().append("/file.pgm"));
@@ -319,6 +340,51 @@ void Controler::getThresholdingIsodata(){
 void Controler::getThresholdingOtsu(){
     Thresholding t;
     Image img = t.applyOtsu(*this->imageOut), *temp;
+    img.saveImage(QDir::currentPath().toStdString().append("/file.pgm"));
+    this->imageOutLabel.load(QDir::currentPath().append("/file.pgm"));
+    temp = new Image(QDir::currentPath().append("/file.pgm").toStdString());
+    this->imageOut = temp;
+}
+
+void Controler::applyOperationAddImage(Image in, double value){
+    OperationArithmetic op;
+    Image img = op.additionImages(*this->imageOut, in, value), *temp;
+    img.saveImage(QDir::currentPath().toStdString().append("/file.pgm"));
+    this->imageOutLabel.load(QDir::currentPath().append("/file.pgm"));
+    temp = new Image(QDir::currentPath().append("/file.pgm").toStdString());
+    this->imageOut = temp;
+}
+
+void Controler::applyOperationAddValue(double value){
+    OperationArithmetic op;
+    Image img = op.additionValue(*this->imageOut, value), *temp;
+    img.saveImage(QDir::currentPath().toStdString().append("/file.pgm"));
+    this->imageOutLabel.load(QDir::currentPath().append("/file.pgm"));
+    temp = new Image(QDir::currentPath().append("/file.pgm").toStdString());
+    this->imageOut = temp;
+}
+
+void Controler::applyOperationDivValue( double value){
+    OperationArithmetic op;
+    Image img = op.divisionValue(*this->imageOut, value), *temp;
+    img.saveImage(QDir::currentPath().toStdString().append("/file.pgm"));
+    this->imageOutLabel.load(QDir::currentPath().append("/file.pgm"));
+    temp = new Image(QDir::currentPath().append("/file.pgm").toStdString());
+    this->imageOut = temp;
+}
+
+void Controler::applyOperationMulValue( double value){
+    OperationArithmetic op;
+    Image img = op.multiplicationValue( *this->imageOut, value), *temp;
+    img.saveImage(QDir::currentPath().toStdString().append("/file.pgm"));
+    this->imageOutLabel.load(QDir::currentPath().append("/file.pgm"));
+    temp = new Image(QDir::currentPath().append("/file.pgm").toStdString());
+    this->imageOut = temp;
+}
+
+void Controler::applyOperationSubValue( double value){
+    OperationArithmetic op;
+    Image img = op.subtractionValue(*this->imageOut,value), *temp;
     img.saveImage(QDir::currentPath().toStdString().append("/file.pgm"));
     this->imageOutLabel.load(QDir::currentPath().append("/file.pgm"));
     temp = new Image(QDir::currentPath().append("/file.pgm").toStdString());

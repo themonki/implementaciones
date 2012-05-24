@@ -10,6 +10,8 @@
 #include "histogram.h"
 #include "contrast.h"
 #include "thresholding.h"
+#include "operationarithmetic.h"
+
 
 
 class Controler
@@ -17,6 +19,8 @@ class Controler
 private:
     Image* imageIn;
     Image* imageOut;
+    Image* histogramIn;
+    Image* histogramOut;
     QImage imageInLabel;
     QImage imageOutLabel;
     QImage convertImageIn();
@@ -36,6 +40,8 @@ public:
     Image* getImageOut();
     QImage getImageInLabel();
     QImage getImageOutLabel();
+    QImage gethistogramInLabel();
+    QImage applyConvertToGrayScale(Image* img, QImage labelImage);
     void applyFilterSigma(int sigma);
     void applyFilterMedian(int);
     void applyFilterCleaningPixel(double);
@@ -48,6 +54,11 @@ public:
     void getThresholdingDosPicos();
     void getThresholdingOtsu();
     void getThresholdingIsodata();
+    void applyOperationAddValue(double value);
+    void applyOperationDivValue(double value);
+    void applyOperationSubValue(double value);
+    void applyOperationMulValue(double value);
+    void applyOperationAddImage(Image in , double value);
     bool isDicomImage();
     bool isppmImage();
     void clearAll();
