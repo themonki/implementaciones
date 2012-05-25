@@ -21,7 +21,8 @@ SOURCES += main.cpp\
     contrast.cpp \
     imageviewer.cpp \
     operationarithmetic.cpp \
-    operationgeometric.cpp
+    operationgeometric.cpp \
+    operationlogic.cpp
 
 HEADERS  += mainwindow.h \
     image.h \
@@ -33,7 +34,8 @@ HEADERS  += mainwindow.h \
     contrast.h \
     imageviewer.h \
     operationarithmetic.h \
-    operationgeometric.h
+    operationgeometric.h \
+    operationlogic.h
 
 FORMS    += mainwindow.ui
 
