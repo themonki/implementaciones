@@ -48,3 +48,7 @@ unix:!macx:!symbian: LIBS += -loflog
 unix:!macx:!symbian: LIBS += -lofstd
 
 unix:!macx:!symbian: LIBS += -lz
+
+OTHER_FILES +=
+
+RESOURCES +=
