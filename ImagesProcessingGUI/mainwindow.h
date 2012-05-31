@@ -51,7 +51,8 @@ private:
     QAction *menuDivValue;
     QAction *menuMulValue;
     QAction *menuSubValue;
-
+    QAction *menuApplyEdgeDetectorCanny;
+    QAction *menuApplyEdgeDetectorSobel;
 
     Ui::MainWindow *ui;
     QMenu *fileMenu;
@@ -59,6 +60,7 @@ private:
     QMenu *filterMenu;
     QMenu *histogramMenu;
     QMenu *contrastMenu;
+    QMenu *edgeMenu;
     QMenu *helpMenu;
 
     void createMenus();
@@ -86,6 +88,8 @@ private:
     QAction* createActionDivValue();
     QAction* createActionMulValue();
     QAction* createActionSubValue();
+    QAction* createActionApplyEdgeDectectorCanny();
+    QAction* createActionApplyEdgeDectectorSobel();
 
 private slots:
     //menu events
@@ -111,6 +115,8 @@ private slots:
     void divValue();
     void mulValue();
     void subValue();
+    void applyEdgeDetectorCanny();
+    void applyEdgeDetectorSobel();
 
     //buttons events
     void showImageFullIn();

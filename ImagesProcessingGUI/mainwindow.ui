@@ -164,9 +164,8 @@
           <enum>QFrame::Plain</enum>
          </property>
          <property name="currentIndex">
-          <number>2</number>
+          <number>0</number>
          </property>
-         <widget class="QWidget" name="page_1"/>
          <widget class="QWidget" name="page_2">
           <widget class="QDial" name="dial">
            <property name="geometry">
@@ -189,6 +188,7 @@
            </property>
           </widget>
          </widget>
+         <widget class="QWidget" name="page_1"/>
          <widget class="QWidget" name="page_3">
           <widget class="QWidget" name="widget_3" native="true">
            <property name="geometry">
@@ -256,9 +256,6 @@
           <string>Ver</string>
          </property>
         </widget>
-        <zorder>labelHistogram</zorder>
-        <zorder>buttonHistogramOut</zorder>
-        <zorder>groupBox_4</zorder>
        </widget>
       </item>
       <item>

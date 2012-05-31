@@ -23,7 +23,8 @@ SOURCES += main.cpp\
     operationarithmetic.cpp \
     operationgeometric.cpp \
     operationlogic.cpp \
-    imagedcm.cpp
+    imagedcm.cpp \
+    edge.cpp
 
 HEADERS  += mainwindow.h \
     image.h \
@@ -37,7 +38,8 @@ HEADERS  += mainwindow.h \
     operationarithmetic.h \
     operationgeometric.h \
     operationlogic.h \
-    imagedcm.h
+    imagedcm.h \
+    edge.h
 
 FORMS    += mainwindow.ui
 

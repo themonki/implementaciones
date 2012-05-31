@@ -11,7 +11,7 @@
 #include "contrast.h"
 #include "thresholding.h"
 #include "operationarithmetic.h"
-
+#include "edge.h"
 
 
 class Controler
@@ -62,6 +62,8 @@ public:
     bool isDicomImage();
     bool isppmImage();
     void clearAll();
+    void applyEdgeDetectorSobel(double threshold);
+    void applyEdgeDetectorCanny(double thresholdHigh, double thresholdsDown);
 
 };
 

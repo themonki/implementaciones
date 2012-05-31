@@ -15,6 +15,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->menubar->addMenu(this->filterMenu);
     ui->menubar->addMenu(this->histogramMenu);
     ui->menubar->addMenu(this->contrastMenu);
+    ui->menubar->addMenu(this->edgeMenu);
     ui->menubar->addMenu(this->helpMenu);
     //in = new ImageViewer(this);
     //out= new ImageViewer(this);
@@ -285,6 +286,26 @@ QAction* MainWindow::createActionSubValue()
     return act;
 }
 
+QAction* MainWindow::createActionApplyEdgeDectectorCanny()
+{
+    QAction *act;
+    act = new QAction(tr("Detector Canny"), this);
+    connect(act, SIGNAL(triggered()), this, SLOT(applyEdgeDetectorCanny()));
+    act->setStatusTip(QObject::trUtf8("Aplica un detector de borde basado en canny"));
+    this->menuApplyEdgeDetectorCanny = act;
+    return act;
+}
+
+QAction* MainWindow::createActionApplyEdgeDectectorSobel()
+{
+    QAction *act;
+    act = new QAction(tr("Detector Sobel"), this);
+    connect(act, SIGNAL(triggered()), this, SLOT(applyEdgeDetectorSobel()));
+    act->setStatusTip(QObject::trUtf8("Aplica un detector de borde basado en sobel"));
+    this->menuApplyEdgeDetectorSobel = act;
+    return act;
+}
+
 void MainWindow::createMenus(){
 
     this->fileMenu = new QMenu(tr("&Archivo"));
@@ -340,6 +361,12 @@ void MainWindow::createMenus(){
     this->menuApplyContrastImprove->setEnabled(false);
     this->menuApplyEqualizer->setEnabled(false);
 
+    this->edgeMenu = new QMenu(tr("&Borde"));
+    this->edgeMenu->addAction(createActionApplyEdgeDectectorCanny());
+    this->edgeMenu->addAction(createActionApplyEdgeDectectorSobel());
+    this->menuApplyEdgeDetectorCanny->setEnabled(false);
+    this->menuApplyEdgeDetectorSobel->setEnabled(false);
+
     this->helpMenu = new QMenu(tr("&Ayuda"));
     this->helpMenu->addAction(createActionAbout());
 
@@ -380,6 +407,8 @@ void MainWindow::initActions(){
         this->menuThresholdingOtsuGet->setEnabled(true);
         this->menuApplyFilterCleaningLine->setEnabled(true);
         this->menuApplyFilterCleaningPixel->setEnabled(true);
+        this->menuApplyEdgeDetectorCanny->setEnabled(true);
+        this->menuApplyEdgeDetectorSobel->setEnabled(true);
 
         this->menuConvertToGrayScale->setEnabled(false);
 
@@ -408,6 +437,8 @@ void MainWindow::initActions(){
         this->menuThresholdingOtsuGet->setEnabled(false);
         this->menuApplyFilterCleaningLine->setEnabled(false);
         this->menuApplyFilterCleaningPixel->setEnabled(false);
+        this->menuApplyEdgeDetectorCanny->setEnabled(false);
+        this->menuApplyEdgeDetectorSobel->setEnabled(false);
 
         this->menuConvertToGrayScale->setEnabled(true);
 
@@ -533,7 +564,8 @@ void MainWindow::closeFile(){
     this->menuSubValue->setEnabled(false);
     this->menuDivValue->setEnabled(false);
     this->menuMulValue->setEnabled(false);
-
+    this->menuApplyEdgeDetectorCanny->setEnabled(false);
+    this->menuApplyEdgeDetectorSobel->setEnabled(false);
 
 }
 
@@ -562,6 +594,8 @@ void MainWindow::convertToGrayScale(){
         this->menuSubValue->setEnabled(true);
         this->menuDivValue->setEnabled(true);
         this->menuMulValue->setEnabled(true);
+        this->menuApplyEdgeDetectorCanny->setEnabled(true);
+        this->menuApplyEdgeDetectorSobel->setEnabled(true);
 
 
     }
@@ -786,4 +820,30 @@ void MainWindow::restoreImage(){
     QPixmap tempPixmap = QPixmap::fromImage(controler.getImageInLabel());
     ui->labelImageIn->setPixmap(tempPixmap);
     ui->labelImageOut->setPixmap(tempPixmap);
+}
+
+void MainWindow::applyEdgeDetectorCanny(){
+    bool ok;
+    double value1 = QInputDialog::getDouble(this, tr("Valor de calculo"),
+                                     tr("Ingrese el valor para el Thresholding Alto"), 0,0,1000,2,&ok);
+    double value2 = QInputDialog::getDouble(this, tr("Valor de calculo"),
+                                     tr("Ingrese el valor para el Thresholding Bajo"), 0,0,(int)value1,2,&ok);
+    this->controler.applyEdgeDetectorCanny(value1, value2);
+    ui->labelImageOut->setPixmap(QPixmap::fromImage(controler.getImageOutLabel()));
+    ui->labelImageOut->setStatusTip(QObject::trUtf8("Detector de Borde Canny aplicado"));
+    ui->labelImageOut->setScaledContents(true);
+    ui->labelImageOut->update();
+
+}
+
+void MainWindow::applyEdgeDetectorSobel(){
+    bool ok;
+    double value = QInputDialog::getDouble(this, tr("Valor de calculo"),
+                                     tr("Ingrese el valor para el Thresholding"), 0,0,255,2,&ok);
+    this->controler.applyEdgeDetectorSobel(value);
+    ui->labelImageOut->setPixmap(QPixmap::fromImage(controler.getImageOutLabel()));
+    ui->labelImageOut->setStatusTip(QObject::trUtf8("Detector de Borde Sobel aplicado"));
+    ui->labelImageOut->setScaledContents(true);
+    ui->labelImageOut->update();
+
 }
