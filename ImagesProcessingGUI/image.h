@@ -21,7 +21,7 @@ typedef vector<vector <double> > matrix;
 
 class Image
 {
-private:
+protected:
 
     int width;
     int height;

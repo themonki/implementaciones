@@ -166,6 +166,7 @@ Image OperationLogic::unaryOperations(Image &image1, unaryOperation operation)
     }
 
 
+    return imageOuput;
 
 
 }
