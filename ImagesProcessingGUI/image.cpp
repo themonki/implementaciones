@@ -404,8 +404,10 @@ void Image::saveImage(string path){
     ofstream imageOut(path.c_str(), ios::out|ios::binary);
     if(!path.substr(path.length()-4, 4).compare(".pgm")){ //Si la ruta es una imagen en escala de grises
 
+        cout << "entre"<<endl;
         if(!this->type.compare("P2"))
         {
+             cout << "entre"<<endl;
             imageOut << "P2\n# Pruebas Procesamiento de Imagenes \n";
             imageOut << width << " " << height << "\n";
             imageOut << level << "\n";
@@ -424,6 +426,8 @@ void Image::saveImage(string path){
                 }
                 imageOut <<"\n";
             }
+
+             cout << "entre"<<endl;
         }else if(!this->type.compare("P5"))
         {
             //Escritura de imagen para P5

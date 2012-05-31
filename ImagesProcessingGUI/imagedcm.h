@@ -13,7 +13,7 @@ class ImageDCM : public Image{
 private:
 
     DicomImage *dicomImage;
-    matrix graysScale;
+    //matrix graysScale;
     vectorx lookUpTable;
     int lutSize;
     double minimunDensity;

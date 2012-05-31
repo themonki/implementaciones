@@ -3,13 +3,13 @@
 ImageDCM::ImageDCM(const char *fileName){
 
     dicomImage = new DicomImage(fileName);
-    bool status =  false;
+
     if (dicomImage != NULL)
     {
         if (dicomImage->getStatus() == EIS_Normal)
         {
 
-            this->type="DCM";
+            this->type="P2";
             this->level=pow(2,(dicomImage->getDepth()-1))-1;
             this->height=dicomImage->getWidth();
             this->width=dicomImage->getHeight();
@@ -49,18 +49,20 @@ ImageDCM::ImageDCM(const char *fileName){
                 }
                 cout << endl;
             }
-
             applyWindowLevel(400,40);
-            saveImage("ventanaPrueba.pgm");
-            applyWindowLevel(800,400);
-             saveImage("ventanaPrueba2.pgm");
+
+            cout << "aplique \n";
 
 
 
 
-            status = true;
+
+
         } else
-            status=false;
+        {
+
+        }
+
     }
 
 }
@@ -132,26 +134,42 @@ void ImageDCM::applyWindowLevel(int window, int level){
     double max = level + floor(window/2);
     double newPixelValue, pixelValue;
 
-    for (int i = 0; i < lutSize; ++i){
+    for (int i = 0; i < lutSize; i++){
         lookUpTable[i]=i-abs(minimunDensity);
+        cout << "density value "<< lookUpTable[i]<< endl;
     }
 
-    for (int i = 0; i < lutSize; ++i){
+    for(int i=0;i<height;i++)
+    {
+        for(int j= 0; j<width;j++)
+        {
+            if (graysScale[i][j]>=min && graysScale[i][j]<=max) {
 
-        if (lookUpTable[i]>=min && lookUpTable[i]<=max) {
+                pixelValue=graysScale[i][j];
+                newPixelValue= (pixelValue-min)*(255/(max-min));
+                graysScale[i][j]=newPixelValue;
+                cout << "new pixel "<< graysScale[i][j]<< endl;
 
-            pixelValue=lookUpTable[i];
-            newPixelValue= (pixelValue-min)*(255/(max-min));
-            lookUpTable[i]=newPixelValue;
 
-        } else{
-            if(lookUpTable[i]>max){
-                lookUpTable[i]=255;
             } else{
-                lookUpTable[i]=0;
+
+                if(graysScale[i][j]>max){
+
+
+                    graysScale[i][j]=255;
+
+                } else{
+
+                    graysScale[i][j]=0;
+
+                }
+
             }
+
+
         }
     }
+
 
 }
 
