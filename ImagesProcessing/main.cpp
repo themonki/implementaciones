@@ -7,21 +7,22 @@
 #include "operationarithmetic.h"
 #include "operationgeometric.h"
 
-
 int main(int argc, char *argv[])
 {
-    Image imagen("../ImagenesPrueba/lena512p2.pgm");
+    Image imagen("../ImagenesPrueba/mariposa.pgm");
 
-    OperationGeometric opg;
+    /*OperationGeometric opg;
     Image scaleout = opg.scaleBilinearGray(imagen, 0.75);
     scaleout.saveImage("../ImagenesPrueba/scaleOutlena.pgm");
     Image scalein = opg.scaleBilinearGray(imagen, 2.0);
     scalein.saveImage("../ImagenesPrueba/scaleInlena.pgm");
+    */
 
-
-    /*Edge e;
-     Image sobel = e.applySobel(imagen);
-     sobel.saveImage("../ImagenesPrueba/sobelLena.pgm");
+    Edge e;
+    Image canny = e.applyCannyDetector(imagen);
+    canny.saveImage("../ImagenesPrueba/cannyLena.pgm");
+     //Image sobel = e.applySobelDetection(imagen,15.0);
+    // sobel.saveImage("../ImagenesPrueba/sobelfilter.pgm");
      //Image profile = e.getProfileIntensityOnY(imagen, 6);
      //profile.saveImage("../ImagenesPrueba/profileLena.pgm");
 

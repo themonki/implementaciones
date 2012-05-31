@@ -173,3 +173,34 @@ Image OperationArithmetic::additionImages(Image &image1, Image &image2, double a
     imageOuput.setGraysScale(grayScaleOuput);
     return imageOuput;
 }
+
+Image OperationArithmetic::invertImage(Image &image){
+    Image imageOuput;
+    int height = image.getHeight();
+    int width = image.getWidth();
+    double level = image.getLevel();
+
+    imageOuput.setHeight(height);
+    imageOuput.setWidth(width);
+    imageOuput.setType(image.getType());
+    imageOuput.setLevel(level);
+
+    matrix grayScaleInput = image.getGraysScale();
+    matrix grayScaleOuput = image.getGraysScale();
+
+    for(int i=0; i<height;i++)
+    {
+        for(int j=0; j<width;j++){
+            double value = level - grayScaleInput[i][j];
+
+            if(value<0){
+                value=0;
+            }
+
+            grayScaleOuput[i][j] = value;
+        }
+    }
+
+    imageOuput.setGraysScale(grayScaleOuput);
+    return imageOuput;
+}
