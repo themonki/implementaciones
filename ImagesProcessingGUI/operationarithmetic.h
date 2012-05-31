@@ -13,6 +13,8 @@ public:
     Image multiplicationValue(Image& image, double mul);
     Image divisionValue(Image& image, double div);
     Image additionImages(Image& image1, Image& image2, double alfa);
+    Image invertImage(Image& image);
+
 };
 
 #endif // OPERATIONARITHMETIC_H

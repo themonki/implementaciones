@@ -391,6 +391,15 @@ void Controler::applyOperationSubValue( double value){
     this->imageOut = temp;
 }
 
+void Controler::applyOperationInvertImage(){
+    OperationArithmetic op;
+    Image img = op.invertImage(*this->imageOut), *temp;
+    img.saveImage(QDir::currentPath().toStdString().append("/file.pgm"));
+    this->imageOutLabel.load(QDir::currentPath().append("/file.pgm"));
+    temp = new Image(QDir::currentPath().append("/file.pgm").toStdString());
+    this->imageOut = temp;
+}
+
 
 bool Controler::isDicomImage(){return dicomImage;}
 
@@ -405,3 +414,25 @@ void Controler::clearAll(){
     this->dicomImage=false;
     this->ppmImage=false;
 }
+
+void Controler::applyEdgeDetectorSobel(double threshold){
+    Edge e;
+    Image img = e.applySobelDetection(*this->imageOut,threshold), *temp;
+    img.saveImage(QDir::currentPath().toStdString().append("/file.pgm"));
+    this->imageOutLabel.load(QDir::currentPath().append("/file.pgm"));
+    temp = new Image(QDir::currentPath().append("/file.pgm").toStdString());
+    this->imageOut = temp;
+}
+
+void Controler::applyEdgeDetectorCanny(double thresholdHigh, double thresholdsDown){
+    Edge e;
+    Image img = e.applyCannyDetector(*this->imageOut,thresholdHigh,thresholdsDown), *temp;
+    img.saveImage(QDir::currentPath().toStdString().append("/file.pgm"));
+    this->imageOutLabel.load(QDir::currentPath().append("/file.pgm"));
+    temp = new Image(QDir::currentPath().append("/file.pgm").toStdString());
+    this->imageOut = temp;
+}
+
+void Controler::applyDicomWindow(){}
+
+void Controler::applyDicomLevel(){}

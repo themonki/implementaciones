@@ -21,58 +21,63 @@
  **
  ****************************************************************************/
 
- #ifndef IMAGEVIEWER_H
- #define IMAGEVIEWER_H
+#ifndef IMAGEVIEWER_H
+#define IMAGEVIEWER_H
 
- #include <QMainWindow>
- #include <QPrinter>
- #include "operationgeometric.h"
+#include <QMainWindow>
+#include <QPrinter>
+#include <QDir>
+#include "operationgeometric.h"
+#include "image.h"
+class QAction;
+class QLabel;
+class QMenu;
+class QScrollArea;
+class QScrollBar;
 
- class QAction;
- class QLabel;
- class QMenu;
- class QScrollArea;
- class QScrollBar;
+class ImageViewer : public QMainWindow
+{
+    Q_OBJECT
 
- class ImageViewer : public QMainWindow
- {
-     Q_OBJECT
+public:
+    ImageViewer(QWidget *parent = 0);
+    ImageViewer(Image, QImage,QString,QWidget *parent = 0);
+    ImageViewer(QImage,QString,QWidget *parent = 0);
 
- public:
-     ImageViewer(QWidget *parent = 0);
-     ImageViewer(Image, QImage,QString,QWidget *parent = 0);
-     ImageViewer(QImage,QString,QWidget *parent = 0);
-
-     QLabel* getImageLabel();
-     QWidget* getWidget();
-     void initComponents(QImage image, QString title);
+    QLabel* getImageLabel();
+    QWidget* getWidget();
+    void initComponents(QImage image, QString title);
 
 private:
-     void createActions();
-     void createMenus();
-     void scaleImage(double factor);
+    void createActions();
+    void createMenus();
+    void scaleImage(double factor);
+    void updtaeImageModificada(Image img2);
 
-     QLabel *imageLabel;
-     QScrollArea *scrollArea;
-     double scaleFactor;
-     Image *img;
+    QLabel *imageLabel;
+    QScrollArea *scrollArea;
+    double scaleFactor;
+    Image *img;
+    Image *imgModificada;
 
-     QAction *exitAct;
-     QAction *zoomInAct;
-     QAction *zoomOutAct;
+    QAction *exitAct;
+    QAction *zoomInAct;
+    QAction *zoomOutAct;
+    QAction *saveAct;
 
-     QMenu *fileMenu;
-     QMenu *viewMenu;
+    QMenu *fileMenu;
+    QMenu *viewMenu;
 
- public slots:
-     void scaleUp();
-     void scaleDown();
+public slots:
+    void scaleUp();
+    void scaleDown();
+    void saveImage();
 
 
- protected:
-     void changeEvent(QEvent *e);
-     void resizeEvent(QResizeEvent *e); //Added
-     void wheelEvent(QWheelEvent *e);
- };
+protected:
+    void changeEvent(QEvent *e);
+    void resizeEvent(QResizeEvent *e); //Added
+    void wheelEvent(QWheelEvent *e);
+};
 
- #endif
+#endif

@@ -51,6 +51,9 @@ private:
     QAction *menuDivValue;
     QAction *menuMulValue;
     QAction *menuSubValue;
+    QAction *menuInvertImage;
+    QAction *menuApplyEdgeDetectorCanny;
+    QAction *menuApplyEdgeDetectorSobel;
 
 
     Ui::MainWindow *ui;
@@ -59,6 +62,7 @@ private:
     QMenu *filterMenu;
     QMenu *histogramMenu;
     QMenu *contrastMenu;
+    QMenu *edgeMenu;
     QMenu *helpMenu;
 
     void createMenus();
@@ -86,6 +90,9 @@ private:
     QAction* createActionDivValue();
     QAction* createActionMulValue();
     QAction* createActionSubValue();
+    QAction* createActionInvertImage();
+    QAction* createActionApplyEdgeDectectorCanny();
+    QAction* createActionApplyEdgeDectectorSobel();
 
 private slots:
     //menu events
@@ -111,6 +118,9 @@ private slots:
     void divValue();
     void mulValue();
     void subValue();
+    void invertImage();
+    void applyEdgeDetectorCanny();
+    void applyEdgeDetectorSobel();
 
     //buttons events
     void showImageFullIn();
@@ -119,6 +129,8 @@ private slots:
     void showImageFullHistogramOut();
     void restoreImage();
 
+    void on_sliderWindow_sliderMoved(int position);
+    void on_sliderLevel_sliderMoved(int position);
 };
 
 #endif // MAINWINDOW_H
