@@ -163,15 +163,22 @@ Image Edge::calcGradient(Image &image, const double gX[][3], const double gY[][3
                 valueX=convolution(grayScaleInput, i, j, gX);
                 valueY=convolution(grayScaleInput, i, j, gY);
 
+                if(valueX==0){
+                    if(valueY<0){
+                        degree = -PI/2;
+                    }else{
+                        degree = PI/2;
+                    }
+                }else{
+                    degree = atan((double)(valueY/valueX));
+                    if(degree==-0){
+                        degree= fabs(degree);
+                    }
+                }
+
                 dx = fabs(valueX);
                 dy = fabs(valueY);
 
-                degree = atan2(dy, dx);
-
-                if(degree<0){
-                    cerr << "noc"<<endl;
-                    degree= fabs(degree);
-                }
                 double value =  (dy + dx);
                 //double value = level - (dy + dx);
                 //value =  (dy/8 + dx/8);
@@ -191,6 +198,7 @@ Image Edge::calcGradient(Image &image, const double gX[][3], const double gY[][3
             }
         }
     }
+
     /*
     imageOuput.setGraysScale(dx);    
     imageOuput.saveImage("../ImagenesPrueba/dx.pgm");
@@ -215,9 +223,13 @@ Image Edge::calcGradient(Image &image, const double gX[][3], const double gY[][3
 
 double Edge::discretOrientation(double value){
     double degree = value * 180 / PI;
-
+    //
     if(degree>=360){
         cerr << "error discret" << endl;
+    }
+
+    if(degree<0){
+        degree = 360.0 + degree;
     }
 
     if(degree >= 22.5 && degree < 67.5 ){//45   1
@@ -245,8 +257,7 @@ double Edge::discretOrientation(double value){
         return 0;
         //return 135*PI/180;
     }
-
-    cerr << "no entro discret" << endl;
+    cerr << "no entro discret1 " << degree<<endl;
     return -1;
 
 }
@@ -254,8 +265,12 @@ double Edge::discretOrientation(double value){
 double Edge::discretDegree(double value){
     double degree = value * 180 / PI;
 
+    if(degree<0){
+        degree = 360 + degree;
+    }
+
     if(degree>=360){
-        cerr << "error discret" << endl;
+        cerr << "error discret:" <<degree << endl;
     }
 
     if(degree >= 22.5 && degree < 67.5 ){//45   1
@@ -267,18 +282,18 @@ double Edge::discretDegree(double value){
     }else if(degree >= 112.5 && degree < 157.5 ){//135  3
         return 3;
         //return 135*PI/180;
-    }else if(degree >= 157.5 && degree < 202.5 ){//180   0
+    }else if(degree >= 157.5 && degree < 202.5 ){//180   4
         return 4;
         //return 135*PI/180;
-    }else if(degree >= 202.5 && degree < 247.5 ){//225   1
+    }else if(degree >= 202.5 && degree < 247.5 ){//225   5
         return 5;
         //return 135*PI/180;
-    }else if(degree >= 247.5 && degree < 292.5 ){//270   2
+    }else if(degree >= 247.5 && degree < 292.5 ){//270   6
         return 6;
         //return 135*PI/180;
-    }else if(degree >= 292.5 && degree < 337.5 ){//315   3
+    }else if(degree >= 292.5 && degree < 337.5 ){//315   7
         return 7;
-       //return 135*PI/180;
+        //return 135*PI/180;
     }else if((degree >= 337.5 && degree < 360) || (degree>=0 && degree < 22.5) ){//0   0
         return 0;
         //return 135*PI/180;
@@ -289,7 +304,7 @@ double Edge::discretDegree(double value){
 
 }
 
-Image Edge::applyCannyDetector(Image &image){
+Image Edge::applyCannyDetector(Image &image,double thresholdHigh, double thresholdsDown){
     Image imageOuput;
     int height = image.getHeight();
     int width = image.getWidth();
@@ -310,13 +325,8 @@ Image Edge::applyCannyDetector(Image &image){
 
     calcGradient(image,Sx,Sy);
     nonMaximumSuppression(height, width);
-    hysteresis(height, width, 220,180);
+    hysteresis(height, width, thresholdHigh,thresholdsDown);
 
-    //OperationArithmetic op;
-    //imageOuput.setLevel(image.getLevel());
-    //imageOuput.setGraysScale(this->edgeNonMaximumSuppression);
-    //imageOuput = op.invertImage(imageOuput);
-    //imageOuput.saveImage("../ImagenesPrueba/nonmaxsup.pgm");
     imageOuput.setLevel(1);
     imageOuput.setGraysScale(this->edgeHysteresis);
     return imageOuput;
@@ -412,8 +422,6 @@ matrix Edge::hysteresis(int heigth, int width, double thresholdHigh, double thre
             if(edgeNonMaximumSuppression[i][j]>=thresholdHigh){
                 //edgeHysteresis[i][j]=0;
                 edgeDetection(i,j,heigth, width, thresholdHigh, thresholdsDown);
-                this->edgeControl[i][j]==1;
-                this->edgeHysteresis[i][j]=0;
             }/*else if(edgeNonMaximumSuppression[i][j]<thresholdsDown){
                 edgeHysteresis[i][j]=1;
                 //this->edgeControl[i][j]=1;
@@ -425,9 +433,12 @@ matrix Edge::hysteresis(int heigth, int width, double thresholdHigh, double thre
 }
 
 int Edge::edgeDetection(int posX, int posY, int heigth, int width, double thresholdHigh, double thresholdsDown){
-    if(this->edgeControl[posX][posY]==0){//si no lo visite
 
-        int degree = this->gradientDegree[posX][posY];
+    if(this->edgeControl[posX][posY]==0){//si no lo visite
+        this->edgeControl[posX][posY]=1;
+        this->edgeHysteresis[posX][posY]=0;
+        int degree = this->gradientDegreeDiscret[posX][posY];
+        //cout << degree << endl;
         switch(degree){//mover al siguiente punto 90° respecto angulo gradiente contra manecillas reloj
         case 0:
             posY--;
@@ -462,59 +473,38 @@ int Edge::edgeDetection(int posX, int posY, int heigth, int width, double thresh
         //siguiente punto!!!
 
         if(!(posX<0 || posX>=heigth) && !(posY<0 || posY>=width) && this->edgeNonMaximumSuppression[posX][posY] >= thresholdsDown){//puede interesarme
-            if(edgeDetection(posX, posY,heigth, width, thresholdHigh, thresholdsDown)){
-                this->edgeControl[posX][posY]==1;
+            if(edgeDetection(posX, posY,heigth, width, thresholdHigh, thresholdsDown)){                
                 this->edgeHysteresis[posX][posY]=0;
                 return 1;
             }
 
-
-
         }
-
+        return 1;
         }
     return 0;
 
-
-
-
-
 /*
-
-    //si sobrepasa los limites
-    if(posX<0 || posX>=heigth){
-        return 1;
-    }else if(posY<0 || posY>=width){
-        return 1;
-    }else if(this->edgeNonMaximumSuppression[posX][posY]<thresholdsDown){// si es menor al TD
-        this->edgeHysteresis[posX][posY]=1;
-        return 1;
-    }else if(this->edgeNonMaximumSuppression[posX][posY]>=thresholdHigh){// me interesa es mayor a TH
-        this->edgeHysteresis[posX][posY]=0;
-        return edgeDetection(posX, posY, heigth, width, thresholdHigh, thresholdsDown);
-    }else {// puede ser un punto de interes
-        //this->edgeHysteresis[posX][posY]=0;
-        return edgeDetection(posX, posY, heigth, width, thresholdHigh, thresholdsDown);
-    }
-
     if(this->edgeHysteresis[posX][posY]==1){
         this->edgeHysteresis[posX][posY]=0;
         for (int y_off = -1; y_off <=1; y_off++)
-                {
-                    for(int x_off = -1; x_off <= 1; x_off++)
+        {
+            for(int x_off = -1; x_off <= 1; x_off++)
+            {
+                if (!(posY == 0 && x_off == 0) && !(posX<0 || posX>=heigth) && !(posY<0 || posY>=width) &&this->gradientMagnitude[posX+x_off][posY + y_off] >= thresholdsDown) {
+                    if (edgeDetection(posX + x_off, posY + y_off,heigth, width, thresholdHigh, thresholdsDown))
                     {
-                        if (!(posY == 0 && x_off == 0) && !(posX<0 || posX>=heigth) && !(posY<0 || posY>=width) &&this->gradientMagnitude[posX+x_off][posY + y_off] >= thresholdsDown) {
-                            if (edgeDetection(posX + x_off, posY + y_off,heigth, width, thresholdHigh, thresholdsDown))
-                            {
-                                return 1;
-                            }
-                        }
+                        return 1;
                     }
-                    return 1;
                 }
+            }
+            return 1;
+        }
         return 0;
 
-    }*/
+    }
+    */
+
+
 
 
 

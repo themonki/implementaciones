@@ -9,7 +9,7 @@
 
 int main(int argc, char *argv[])
 {
-    Image imagen("../ImagenesPrueba/mariposa.pgm");
+    Image imagen("../ImagenesPrueba/lena512p2.pgm");
 
     /*OperationGeometric opg;
     Image scaleout = opg.scaleBilinearGray(imagen, 0.75);
@@ -19,7 +19,7 @@ int main(int argc, char *argv[])
     */
 
     Edge e;
-    Image canny = e.applyCannyDetector(imagen);
+    Image canny = e.applyCannyDetector(imagen, 250, 180);
     canny.saveImage("../ImagenesPrueba/cannyLena.pgm");
      //Image sobel = e.applySobelDetection(imagen,15.0);
     // sobel.saveImage("../ImagenesPrueba/sobelfilter.pgm");

@@ -7,6 +7,7 @@
 
 
 #define PI 3.14159265
+#define RECT_ANGLE 1.57079633;
 
 const double Sx [3][3] ={{-1,-2,-1},{0,0,0},{1,2,1}} , Sy [3][3]= {{-1,0,1},{-2,0,2},{-1,0,1}};
 
@@ -18,7 +19,7 @@ public:
     Image getProfileIntensityOnY(Image& img, int lineY);
     Image calcGradient(Image& img,const double gX[][3], const double gY[][3]);
     Image applySobelDetection(Image& img, double threshold);
-    Image applyCannyDetector(Image& img);
+    Image applyCannyDetector(Image& img, double, double);
     matrix nonMaximumSuppression(int,int);
     matrix hysteresis(int,int, double, double);
     double convolution(matrix& img, int posX, int posY,const double kernel[][3]);
