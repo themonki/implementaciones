@@ -52,6 +52,9 @@ ImageViewer::ImageViewer(Image img2, QImage image, QString title, QWidget *paren
     img->setType(img2.getType());
     img->setWidth(img2.getWidth());
 
+    this->imgModificada=new Image();
+    updtaeImageModificada(img2);
+
     initComponents(image,title);
     createActions();
     createMenus();
@@ -92,7 +95,11 @@ ImageViewer::ImageViewer(Image img2, QImage image, QString title, QWidget *paren
 
  void ImageViewer::createActions()
  {
-     exitAct = new QAction(tr("E&xit"), this);
+     this->saveAct = new QAction(tr("&Save"), this);
+     saveAct->setShortcut(tr("Ctrl+S"));
+     connect(saveAct, SIGNAL(triggered()), this, SLOT(saveImage()));
+
+     exitAct = new QAction(tr("Sa&lir"), this);
      exitAct->setShortcut(tr("Ctrl+Q"));
      connect(exitAct, SIGNAL(triggered()), this, SLOT(close()));
 
@@ -111,6 +118,7 @@ ImageViewer::ImageViewer(Image img2, QImage image, QString title, QWidget *paren
  void ImageViewer::createMenus()
  {
      fileMenu = new QMenu(tr("&File"), this);
+     fileMenu->addAction(saveAct);
      fileMenu->addAction(exitAct);
 
      viewMenu = new QMenu(tr("&View"), this);
@@ -126,7 +134,8 @@ ImageViewer::ImageViewer(Image img2, QImage image, QString title, QWidget *paren
  {
      OperationGeometric opg;
      Image temp = opg.scaleBilinearGray(*img,(double) fabs( factor));
-     temp.saveImage("file.pgm");
+     updtaeImageModificada(temp);
+     imgModificada->saveImage("file.pgm");
      QImage scalada("file.pgm");
 
      imageLabel->setPixmap(QPixmap::fromImage(scalada));
@@ -226,3 +235,24 @@ ImageViewer::ImageViewer(Image img2, QImage image, QString title, QWidget *paren
      //ui->buttonScaleUp->setEnabled(numScale < 3.0);
      //ui->buttonScaleDown->setEnabled(numScale > 0.333);
  }*/
+
+ void ImageViewer::saveImage(){
+     QString temp = QFileDialog::getSaveFileName(this,"Seleccionar lugar y nombre del archivo", QDir::homePath(), "Imagenes pgm (*.pgm *.ppm)");
+     if(temp.isNull()){
+         return;
+     }
+     this->imgModificada->saveImage(temp.toStdString());
+
+ }
+
+ void ImageViewer::updtaeImageModificada(Image img2){
+     imgModificada->setBlue(img2.getBlue());
+     imgModificada->setGraysScale(img2.getGraysScale());
+     imgModificada->setGreen(img2.getGreen());
+
+     imgModificada->setHeight(img2.getHeight());
+     imgModificada->setLevel(img2.getLevel());
+     imgModificada->setRed(img2.getRed());
+     imgModificada->setType(img2.getType());
+     imgModificada->setWidth(img2.getWidth());
+ }

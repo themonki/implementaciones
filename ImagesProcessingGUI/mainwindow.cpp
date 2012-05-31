@@ -286,6 +286,16 @@ QAction* MainWindow::createActionSubValue()
     return act;
 }
 
+QAction* MainWindow::createActionInvertImage()
+{
+    QAction *act;
+    act = new QAction(tr("Invertir la imagen"), this);
+    connect(act, SIGNAL(triggered()), this, SLOT(invertImage()));
+    act->setStatusTip(QObject::trUtf8("invertira los valores de la imagen"));
+    this->menuInvertImage = act;
+    return act;
+}
+
 QAction* MainWindow::createActionApplyEdgeDectectorCanny()
 {
     QAction *act;
@@ -322,12 +332,14 @@ void MainWindow::createMenus(){
     this->toolsMenu->addAction(createActionSubValue());
     this->toolsMenu->addAction(createActionMulValue());
     this->toolsMenu->addAction(createActionDivValue());
+    this->toolsMenu->addAction(createActionInvertImage());
     this->menuConvertToGrayScale->setEnabled(false);
     this->menuAddImages->setEnabled(false);
     this->menuAddValue->setEnabled(false);
     this->menuSubValue->setEnabled(false);
     this->menuDivValue->setEnabled(false);
     this->menuMulValue->setEnabled(false);
+    this->menuInvertImage->setEnabled(false);
 
     this->filterMenu = new QMenu(tr("&Filtro"));
     this->filterMenu->addAction(createActionFilterMedian());
@@ -340,13 +352,13 @@ void MainWindow::createMenus(){
     this->menuApplyFilterCleaningPixel->setEnabled(false);
 
 
-
-    this->histogramMenu = new QMenu(tr("&Histogram"));
+    this->histogramMenu = new QMenu(tr("&Histograma"));
     this->histogramMenu->addAction(createActionHistogram());
     this->histogramMenu->addAction(createActionThresholdingDosPicos());
     this->histogramMenu->addAction(createActionThresholdingIsodata());
     this->histogramMenu->addAction(createActionThresholdingOtsu());
     this->menuHistogramGet->setEnabled(false);
+    this->menuHistogramGet->setVisible(false);
     this->menuThresholdingIsodataGet->setEnabled(false);
     this->menuThresholdingDosPicosGet->setEnabled(false);
     this->menuThresholdingOtsuGet->setEnabled(false);
@@ -417,6 +429,7 @@ void MainWindow::initActions(){
         this->menuSubValue->setEnabled(true);
         this->menuDivValue->setEnabled(true);
         this->menuMulValue->setEnabled(true);
+        this->menuInvertImage->setEnabled(true);
 
         ui->buttonShowIn->setEnabled(true);
         ui->buttonShowOut->setEnabled(true);
@@ -447,6 +460,7 @@ void MainWindow::initActions(){
         this->menuSubValue->setEnabled(false);
         this->menuDivValue->setEnabled(false);
         this->menuMulValue->setEnabled(false);
+        this->menuInvertImage->setEnabled(false);
 
         ui->buttonShowIn->setEnabled(true);
         ui->buttonShowOut->setEnabled(false);
@@ -494,10 +508,11 @@ void MainWindow::openFile(){
     //this->labelImageOut->setPixmap(temp);
     //out->getImageLabel()->adjustSize();
     ui->labelImageOut->setPixmap(tempPixmap);
-    ui->labelImageOut->setScaledContents(true);
-
+    ui->labelImageOut->setScaledContents(true);    
     //this->labelHistogram->setPixmap(QPixmap::fromImage(QImage()));
     ui->labelHistogram->setScaledContents(true);
+
+    this->getHistogram();
 
     ui->labelImageIn->update();
     ui->labelImageOut->update();
@@ -564,6 +579,7 @@ void MainWindow::closeFile(){
     this->menuSubValue->setEnabled(false);
     this->menuDivValue->setEnabled(false);
     this->menuMulValue->setEnabled(false);
+    this->menuInvertImage->setEnabled(false);
     this->menuApplyEdgeDetectorCanny->setEnabled(false);
     this->menuApplyEdgeDetectorSobel->setEnabled(false);
 
@@ -594,11 +610,13 @@ void MainWindow::convertToGrayScale(){
         this->menuSubValue->setEnabled(true);
         this->menuDivValue->setEnabled(true);
         this->menuMulValue->setEnabled(true);
+        this->menuInvertImage->setEnabled(true);
         this->menuApplyEdgeDetectorCanny->setEnabled(true);
         this->menuApplyEdgeDetectorSobel->setEnabled(true);
 
 
     }
+    this->getHistogram();
 }
 
 void MainWindow::applyFilterMedian(){
@@ -610,6 +628,7 @@ void MainWindow::applyFilterMedian(){
     ui->labelImageOut->setStatusTip("Filtro Mediana Aplicado");
     ui->labelImageOut->setScaledContents(true);
     ui->labelImageOut->update();
+    this->getHistogram();
 }
 
 void MainWindow::applyFilterSigma(){
@@ -621,6 +640,7 @@ void MainWindow::applyFilterSigma(){
     ui->labelImageOut->setStatusTip("Filtro Sigma Aplicado");
     ui->labelImageOut->setScaledContents(true);
     ui->labelImageOut->update();
+    this->getHistogram();
 
 }
 
@@ -633,6 +653,7 @@ void MainWindow::applyFilterCleaningPixel(){
     ui->labelImageOut->setStatusTip("Filtro Cleaning Pixel Aplicado");
     ui->labelImageOut->setScaledContents(true);
     ui->labelImageOut->update();
+    this->getHistogram();
 }
 
 void MainWindow::applyFilterCleaningLine(){
@@ -644,6 +665,7 @@ void MainWindow::applyFilterCleaningLine(){
     ui->labelImageOut->setStatusTip("Filtro Cleaning Pixel Aplicado");
     ui->labelImageOut->setScaledContents(true);
     ui->labelImageOut->update();
+    this->getHistogram();
 }
 
 void MainWindow::applyContrastGammaCorrection(){
@@ -655,6 +677,7 @@ void MainWindow::applyContrastGammaCorrection(){
     ui->labelImageOut->setStatusTip(QObject::trUtf8("Corrección Gamma Aplicado"));
     ui->labelImageOut->setScaledContents(true);
     ui->labelImageOut->update();
+    this->getHistogram();
 }
 
 void MainWindow::applyContrastStretching(){
@@ -663,6 +686,7 @@ void MainWindow::applyContrastStretching(){
     ui->labelImageOut->setStatusTip(QObject::trUtf8("Contraste Stretching Aplicado"));
     ui->labelImageOut->setScaledContents(true);
     ui->labelImageOut->update();
+    this->getHistogram();
 }
 
 void MainWindow::applyContrastImprove(){
@@ -674,6 +698,7 @@ void MainWindow::applyContrastImprove(){
     ui->labelImageOut->setStatusTip(QObject::trUtf8("Contraste Improve Aplicado"));
     ui->labelImageOut->setScaledContents(true);
     ui->labelImageOut->update();
+    this->getHistogram();
 }
 
 void MainWindow::applyEqualizer(){
@@ -682,6 +707,7 @@ void MainWindow::applyEqualizer(){
     ui->labelImageOut->setStatusTip(QObject::trUtf8("Equalizador Aplicado"));
     ui->labelImageOut->setScaledContents(true);
     ui->labelImageOut->update();
+    this->getHistogram();
 }
 
 void MainWindow::getHistogram(){
@@ -691,6 +717,7 @@ void MainWindow::getHistogram(){
     ui->buttonHistogramOut->setEnabled(true);
     //this->labelHistogram->setScaledContents(true);
     //this->labelHistogram->update();
+
 }
 
 void MainWindow::getThresholdingDosPicos(){
@@ -699,6 +726,7 @@ void MainWindow::getThresholdingDosPicos(){
     ui->labelImageOut->setStatusTip(QObject::trUtf8("Calculo de Dos Picos"));
     ui->labelImageOut->setScaledContents(true);
     ui->labelImageOut->update();
+    this->getHistogram();
 }
 
 void MainWindow::getThresholdingIsodata(){
@@ -707,6 +735,7 @@ void MainWindow::getThresholdingIsodata(){
     ui->labelImageOut->setStatusTip(QObject::trUtf8("Calculo de Isodata"));
     ui->labelImageOut->setScaledContents(true);
     ui->labelImageOut->update();
+    this->getHistogram();
 }
 
 void MainWindow::getThresholdingOtsu(){
@@ -715,6 +744,7 @@ void MainWindow::getThresholdingOtsu(){
     ui->labelImageOut->setStatusTip(QObject::trUtf8("Calculo de Otsu"));
     ui->labelImageOut->setScaledContents(true);
     ui->labelImageOut->update();
+    this->getHistogram();
 }
 
 void MainWindow::showAbout(){
@@ -747,6 +777,7 @@ void MainWindow::addImage(){
     ui->labelImageOut->setStatusTip(QObject::trUtf8("Suma de Imagen aplicado"));
     ui->labelImageOut->setScaledContents(true);
     ui->labelImageOut->update();
+    this->getHistogram();
 }
 
 void MainWindow::addValue(){
@@ -758,6 +789,7 @@ void MainWindow::addValue(){
     ui->labelImageOut->setStatusTip(QObject::trUtf8("Suma de nivel aplicado"));
     ui->labelImageOut->setScaledContents(true);
     ui->labelImageOut->update();
+    this->getHistogram();
 }
 
 void MainWindow::divValue(){
@@ -769,6 +801,7 @@ void MainWindow::divValue(){
     ui->labelImageOut->setStatusTip(QObject::trUtf8("Division de nivel aplicado"));
     ui->labelImageOut->setScaledContents(true);
     ui->labelImageOut->update();
+    this->getHistogram();
 }
 
 void MainWindow::mulValue(){
@@ -780,6 +813,7 @@ void MainWindow::mulValue(){
     ui->labelImageOut->setStatusTip(QObject::trUtf8("Multiplicación de nivel aplicado"));
     ui->labelImageOut->setScaledContents(true);
     ui->labelImageOut->update();
+    this->getHistogram();
 }
 
 void MainWindow::subValue(){
@@ -791,6 +825,17 @@ void MainWindow::subValue(){
     ui->labelImageOut->setStatusTip(QObject::trUtf8("Resta de nivel aplicado"));
     ui->labelImageOut->setScaledContents(true);
     ui->labelImageOut->update();
+    this->getHistogram();
+}
+
+void MainWindow::invertImage(){
+
+    this->controler.applyOperationInvertImage();
+    ui->labelImageOut->setPixmap(QPixmap::fromImage(controler.getImageOutLabel()));
+    ui->labelImageOut->setStatusTip(QObject::trUtf8("Imagen Invertida"));
+    ui->labelImageOut->setScaledContents(true);
+    ui->labelImageOut->update();
+    this->getHistogram();
 }
 
 
@@ -820,6 +865,7 @@ void MainWindow::restoreImage(){
     QPixmap tempPixmap = QPixmap::fromImage(controler.getImageInLabel());
     ui->labelImageIn->setPixmap(tempPixmap);
     ui->labelImageOut->setPixmap(tempPixmap);
+    this->getHistogram();
 }
 
 void MainWindow::applyEdgeDetectorCanny(){
@@ -833,7 +879,7 @@ void MainWindow::applyEdgeDetectorCanny(){
     ui->labelImageOut->setStatusTip(QObject::trUtf8("Detector de Borde Canny aplicado"));
     ui->labelImageOut->setScaledContents(true);
     ui->labelImageOut->update();
-
+    this->getHistogram();
 }
 
 void MainWindow::applyEdgeDetectorSobel(){
@@ -845,5 +891,28 @@ void MainWindow::applyEdgeDetectorSobel(){
     ui->labelImageOut->setStatusTip(QObject::trUtf8("Detector de Borde Sobel aplicado"));
     ui->labelImageOut->setScaledContents(true);
     ui->labelImageOut->update();
+    this->getHistogram();
 
+}
+
+void MainWindow::on_sliderWindow_sliderMoved(int position)
+{
+    cout << "windows " << position<< endl;
+    this->controler.applyDicomWindow();
+    ui->labelImageOut->setPixmap(QPixmap::fromImage(controler.getImageOutLabel()));
+    ui->labelImageOut->setStatusTip(QObject::trUtf8("Detector de Borde Sobel aplicado"));
+    ui->labelImageOut->setScaledContents(true);
+    ui->labelImageOut->update();
+    //this->getHistogram();
+}
+
+void MainWindow::on_sliderLevel_sliderMoved(int position)
+{
+    cout << "level " << position<< endl;
+    this->controler.applyDicomLevel();
+    ui->labelImageOut->setPixmap(QPixmap::fromImage(controler.getImageOutLabel()));
+    ui->labelImageOut->setStatusTip(QObject::trUtf8("Detector de Borde Sobel aplicado"));
+    ui->labelImageOut->setScaledContents(true);
+    ui->labelImageOut->update();
+    //this->getHistogram();
 }

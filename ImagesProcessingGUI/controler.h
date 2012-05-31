@@ -59,11 +59,14 @@ public:
     void applyOperationSubValue(double value);
     void applyOperationMulValue(double value);
     void applyOperationAddImage(Image in , double value);
+    void applyOperationInvertImage();
     bool isDicomImage();
     bool isppmImage();
     void clearAll();
     void applyEdgeDetectorSobel(double threshold);
     void applyEdgeDetectorCanny(double thresholdHigh, double thresholdsDown);
+    void applyDicomWindow();
+    void applyDicomLevel();
 
 };
 

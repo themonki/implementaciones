@@ -391,6 +391,15 @@ void Controler::applyOperationSubValue( double value){
     this->imageOut = temp;
 }
 
+void Controler::applyOperationInvertImage(){
+    OperationArithmetic op;
+    Image img = op.invertImage(*this->imageOut), *temp;
+    img.saveImage(QDir::currentPath().toStdString().append("/file.pgm"));
+    this->imageOutLabel.load(QDir::currentPath().append("/file.pgm"));
+    temp = new Image(QDir::currentPath().append("/file.pgm").toStdString());
+    this->imageOut = temp;
+}
+
 
 bool Controler::isDicomImage(){return dicomImage;}
 
@@ -423,3 +432,7 @@ void Controler::applyEdgeDetectorCanny(double thresholdHigh, double thresholdsDo
     temp = new Image(QDir::currentPath().append("/file.pgm").toStdString());
     this->imageOut = temp;
 }
+
+void Controler::applyDicomWindow(){}
+
+void Controler::applyDicomLevel(){}

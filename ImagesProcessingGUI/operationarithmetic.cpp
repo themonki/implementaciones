@@ -55,14 +55,14 @@ Image OperationArithmetic::subtractionValue(Image &image, double sub){
     {
         for(int j=0; j<width;j++){
 
-            double value = level - fabs(grayScaleInput[i][j] - sub);
-            /*if(value<0){//negativo
+            double value = fabs(grayScaleInput[i][j] - sub);
+            if(value<0){//negativo
                 value = level+1+value;
             }
             if(value>level){//si por alguna razon
                 value = level;
                 cerr << "es mayor: operation::subtractionValue" << endl;
-            }*/
+            }
             grayScaleOuput[i][j] = value;
         }
     }
@@ -169,6 +169,37 @@ Image OperationArithmetic::additionImages(Image &image1, Image &image2, double a
         }
     }
 
+
+    imageOuput.setGraysScale(grayScaleOuput);
+    return imageOuput;
+}
+
+Image OperationArithmetic::invertImage(Image &image){
+    Image imageOuput;
+    int height = image.getHeight();
+    int width = image.getWidth();
+    double level = image.getLevel();
+
+    imageOuput.setHeight(height);
+    imageOuput.setWidth(width);
+    imageOuput.setType(image.getType());
+    imageOuput.setLevel(level);
+
+    matrix grayScaleInput = image.getGraysScale();
+    matrix grayScaleOuput = image.getGraysScale();
+
+    for(int i=0; i<height;i++)
+    {
+        for(int j=0; j<width;j++){
+            double value = level - grayScaleInput[i][j];
+
+            if(value<0){
+                value=0;
+            }
+
+            grayScaleOuput[i][j] = value;
+        }
+    }
 
     imageOuput.setGraysScale(grayScaleOuput);
     return imageOuput;
