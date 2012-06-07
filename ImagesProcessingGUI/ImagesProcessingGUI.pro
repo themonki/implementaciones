@@ -24,7 +24,8 @@ SOURCES += main.cpp\
     operationgeometric.cpp \
     operationlogic.cpp \
     imagedcm.cpp \
-    edge.cpp
+    edge.cpp \
+    segmentation.cpp
 
 HEADERS  += mainwindow.h \
     image.h \
@@ -39,7 +40,8 @@ HEADERS  += mainwindow.h \
     operationgeometric.h \
     operationlogic.h \
     imagedcm.h \
-    edge.h
+    edge.h \
+    segmentation.h
 
 FORMS    += mainwindow.ui
 
