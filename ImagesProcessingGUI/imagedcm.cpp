@@ -11,8 +11,8 @@ ImageDCM::ImageDCM(const char *fileName){
 
             this->type="P2";
             this->level=pow(2,(dicomImage->getDepth()-1))-1;
-            this->height=dicomImage->getWidth();
-            this->width=dicomImage->getHeight();
+            this->height=dicomImage->getHeight();
+            this->width=dicomImage->getWidth();
 
 
             //Lectura correcta datos imagen DICOM
@@ -49,9 +49,12 @@ ImageDCM::ImageDCM(const char *fileName){
                 }
                 cout << endl;
             }
-            applyWindowLevel(400,40);
+            applyWindowLevel(1000,500);
+            setLevel(255);
+            saveImage("prueba.pgm");
 
             cout << "aplique \n";
+
 
 
 
